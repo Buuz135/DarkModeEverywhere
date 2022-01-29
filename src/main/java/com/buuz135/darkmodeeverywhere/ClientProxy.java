@@ -5,22 +5,17 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.ContainerScreen;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.event.RegisterShadersEvent;
 import net.minecraftforge.client.event.ScreenEvent;
-import net.minecraftforge.client.event.ScreenOpenEvent;
-import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.EventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 import java.io.IOException;
@@ -56,7 +51,7 @@ public class ClientProxy {
                 DarkModeEverywhere.LOGGER.info("Registered shader " + shader.resourceLocation);
                 loaderShaders.add(shader.resourceLocation);
             } catch (IOException e) {
-                e.printStackTrace();
+                DarkModeEverywhere.LOGGER.trace(e);
             }
         }
         if (CONFIG.getSelectedShader() != null){
@@ -66,8 +61,8 @@ public class ClientProxy {
 
     @SubscribeEvent
     public void openGui(ScreenEvent.InitScreenEvent event){
-       if (Minecraft.getInstance().level != null && event.getScreen() instanceof ContainerScreen){
-           event.addListener(new Button(40, event.getScreen().height - 24, 60, 20, new TextComponent("Dark Mode"), but -> {
+       if (Minecraft.getInstance().level != null && (event.getScreen() instanceof AbstractContainerScreen)){
+           event.addListener(new Button(60, event.getScreen().height - 24, 60, 20, new TextComponent("Dark Mode"), but -> {
                if (Screen.hasShiftDown()){
                    SELECTED_SHADER = null;
 

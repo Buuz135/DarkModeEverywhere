@@ -2,14 +2,10 @@ package com.buuz135.darkmodeeverywhere.mixins;
 
 import com.buuz135.darkmodeeverywhere.ClientProxy;
 import com.buuz135.darkmodeeverywhere.ShaderConfig;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.font.glyphs.BakedGlyph;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
-import org.spongepowered.asm.mixin.injection.ModifyArgs;
-import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 import java.awt.*;
 
