@@ -6,8 +6,8 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.gui.screens.inventory.ContainerScreen;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
@@ -61,8 +61,14 @@ public class ClientProxy {
 
     @SubscribeEvent
     public void openGui(ScreenEvent.InitScreenEvent event){
-       if (Minecraft.getInstance().level != null && (event.getScreen() instanceof AbstractContainerScreen)){
-           event.addListener(new Button(60, event.getScreen().height - 24, 60, 20, new TextComponent("Dark Mode"), but -> {
+       if (event.getScreen() instanceof AbstractContainerScreen || (DarkConfig.CLIENT.SHOW_IN_MAIN.get() && event.getScreen() instanceof TitleScreen)){
+           int x = DarkConfig.CLIENT.X.get();
+           int y = DarkConfig.CLIENT.Y.get();
+           if (event.getScreen() instanceof TitleScreen){
+               x = DarkConfig.CLIENT.MAIN_X.get();
+               y = DarkConfig.CLIENT.MAIN_Y.get();
+           }
+           event.addListener(new Button(x, event.getScreen().height - 24 - y, 60, 20, new TextComponent(event.getScreen() instanceof TitleScreen ? DarkConfig.CLIENT.MAIN_NAME.get() : DarkConfig.CLIENT.NAME.get()), but -> {
                if (Screen.hasShiftDown()){
                    SELECTED_SHADER = null;
 

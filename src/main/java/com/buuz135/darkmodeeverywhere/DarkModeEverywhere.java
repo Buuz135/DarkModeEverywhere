@@ -1,10 +1,11 @@
 package com.buuz135.darkmodeeverywhere;
 
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.IExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,6 +21,8 @@ public class DarkModeEverywhere {
         if (FMLEnvironment.dist == Dist.CLIENT){
             new ClientProxy();
         }
+        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, DarkConfig.CLIENT.SPEC);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(DarkConfig.CLIENT::onConfigReload);
     }
 
 }
