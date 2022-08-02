@@ -10,7 +10,6 @@ import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.event.RegisterShadersEvent;
 import net.minecraftforge.client.event.ScreenEvent;
@@ -60,7 +59,7 @@ public class ClientProxy {
     }
 
     @SubscribeEvent
-    public void openGui(ScreenEvent.InitScreenEvent event){
+    public void openGui(ScreenEvent.Init event){
        if (event.getScreen() instanceof AbstractContainerScreen || (DarkConfig.CLIENT.SHOW_IN_MAIN.get() && event.getScreen() instanceof TitleScreen)){
            int x = DarkConfig.CLIENT.X.get();
            int y = DarkConfig.CLIENT.Y.get();
@@ -68,7 +67,7 @@ public class ClientProxy {
                x = DarkConfig.CLIENT.MAIN_X.get();
                y = DarkConfig.CLIENT.MAIN_Y.get();
            }
-           event.addListener(new Button(x, event.getScreen().height - 24 - y, 60, 20, new TextComponent(event.getScreen() instanceof TitleScreen ? DarkConfig.CLIENT.MAIN_NAME.get() : DarkConfig.CLIENT.NAME.get()), but -> {
+           event.addListener(new Button(x, event.getScreen().height - 24 - y, 60, 20, Component.literal(event.getScreen() instanceof TitleScreen ? DarkConfig.CLIENT.MAIN_NAME.get() : DarkConfig.CLIENT.NAME.get()), but -> {
                if (Screen.hasShiftDown()){
                    SELECTED_SHADER = null;
 
@@ -85,8 +84,8 @@ public class ClientProxy {
                CONFIG.setSelectedShader(SELECTED_SHADER);
            }, (p_93753_, p_93754_, p_93755_, p_93756_) -> {
                List<Component> tooltip = new ArrayList<>();
-               tooltip.add(SELECTED_SHADER == null ? new TextComponent("Light Mode") : new TextComponent(SHADER_VALUES.get(SELECTED_SHADER).displayName));
-               tooltip.add(new TextComponent(" * Use shift to change it to Light Mode").withStyle(ChatFormatting.GRAY));
+               tooltip.add(SELECTED_SHADER == null ? Component.literal("Light Mode") : Component.literal(SHADER_VALUES.get(SELECTED_SHADER).displayName));
+               tooltip.add(Component.literal(" * Use shift to change it to Light Mode").withStyle(ChatFormatting.GRAY));
                event.getScreen().renderComponentTooltip(p_93754_,tooltip,  p_93755_, p_93756_);
            }));
        }
