@@ -1,6 +1,9 @@
 package com.buuz135.darkmodeeverywhere.mixins;
 
 import com.buuz135.darkmodeeverywhere.ClientProxy;
+import com.buuz135.darkmodeeverywhere.DarkConfig;
+import com.buuz135.darkmodeeverywhere.RenderedClassesTracker;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.ShaderInstance;
 import org.spongepowered.asm.mixin.Mixin;
@@ -8,14 +11,42 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Mixin(GameRenderer.class)
 public class GameRenderMixin {
-
 
     @Inject(method = "getPositionTexShader", at = @At("HEAD"), cancellable = true)
     private static void getPositionTexShader(CallbackInfoReturnable<ShaderInstance> cir) {
         if (ClientProxy.SELECTED_SHADER != null){
-            cir.setReturnValue(ClientProxy.REGISTERED_SHADERS.get(ClientProxy.SELECTED_SHADER));
+            var element = getCallerCallerClassName();
+            if (element == null){
+                cir.setReturnValue(ClientProxy.REGISTERED_SHADERS.get(ClientProxy.SELECTED_SHADER));
+            } else {
+                var elementName = element.getClassName() + ":" + element.getMethodName();
+                RenderedClassesTracker.add(elementName);
+                if (ClientProxy.BLACKLISTED_ELEMENTS.contains(elementName)){
+                    cir.setReturnValue(ClientProxy.REGISTERED_SHADERS.get(ClientProxy.SELECTED_SHADER));
+                }else if (DarkConfig.CLIENT.METHOD_SHADER_BLACKLIST.get().stream().noneMatch(el -> elementName.contains(el))){
+                    ClientProxy.BLACKLISTED_ELEMENTS.add(elementName);
+                    cir.setReturnValue(ClientProxy.REGISTERED_SHADERS.get(ClientProxy.SELECTED_SHADER));
+                }
+            }
         }
+    }
+
+    private static StackTraceElement getCallerCallerClassName() {
+        StackTraceElement[] stElements = Thread.currentThread().getStackTrace();
+        for (int i=1; i<stElements.length; i++) {
+            StackTraceElement ste = stElements[i];
+            if (!ste.getClassName().equals(GameRenderer.class.getName())
+                    && ste.getClassName().indexOf("java.lang.Thread")!=0
+                    && !ste.getMethodName().equals("setShader")
+                    && !ste.getClassName().equals(GuiComponent.class.getName())) {
+                return ste;
+            }
+        }
+        return null;
     }
 }

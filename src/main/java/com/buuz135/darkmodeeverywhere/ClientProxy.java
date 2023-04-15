@@ -15,6 +15,9 @@ import net.minecraftforge.client.event.RegisterShadersEvent;
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.InterModComms;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
+import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 import java.io.IOException;
@@ -24,6 +27,9 @@ import java.util.List;
 
 public class ClientProxy {
 
+    public static List<String> BLACKLISTED_ELEMENTS = new ArrayList<>();
+    public static List<String> MODDED_BLACKLIST = new ArrayList<>();
+
     public static ShaderConfig CONFIG = new ShaderConfig();
     public static HashMap<ResourceLocation, ShaderInstance> REGISTERED_SHADERS = new HashMap<>();
     public static HashMap<ResourceLocation, ShaderConfig.Value> SHADER_VALUES = new HashMap<>();
@@ -32,6 +38,8 @@ public class ClientProxy {
     public ClientProxy() {
         ShaderConfig.load();
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::shaderRegister);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onConfigReload);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::imcCallback);
         MinecraftForge.EVENT_BUS.addListener(this::openGui);
     }
 
@@ -56,6 +64,21 @@ public class ClientProxy {
         if (CONFIG.getSelectedShader() != null){
             SELECTED_SHADER = new ResourceLocation(CONFIG.getSelectedShader());
         }
+        RenderedClassesTracker.start();
+    }
+
+    @SubscribeEvent
+    public void onConfigReload(ModConfigEvent.Reloading reloading){
+        BLACKLISTED_ELEMENTS.clear();
+    }
+
+    @SubscribeEvent
+    public void imcCallback(InterModProcessEvent event) {
+        event.getIMCStream(string -> string.equals("dme-shaderblacklist")).forEach(imcMessage -> {
+            String classMethodBlacklist = (String) imcMessage.messageSupplier().get();
+            MODDED_BLACKLIST.add(classMethodBlacklist);
+        });
+
     }
 
     @SubscribeEvent
