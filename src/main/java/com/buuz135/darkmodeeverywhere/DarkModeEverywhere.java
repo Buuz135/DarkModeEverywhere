@@ -15,6 +15,7 @@ public class DarkModeEverywhere {
 
     // Directly reference a log4j logger.
     public static final Logger LOGGER = LogManager.getLogger();
+    public static final String MODID = "darkmodeeverywhere";
 
     public DarkModeEverywhere() {
         ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> "ANY", (remote, isServer) -> true));
