@@ -24,8 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class ClientProxy {
-
-    public static List<String> BLACKLISTED_ELEMENTS = new ArrayList<>();
+    public static HashMap<String, Boolean> BLACKLISTED_ELEMENTS = new HashMap<>();
     public static List<String> MODDED_BLACKLIST = new ArrayList<>();
 
     public static ShaderConfig CONFIG = new ShaderConfig();
@@ -70,8 +69,20 @@ public class ClientProxy {
     }
 
     @SubscribeEvent
-    public void onConfigReload(ModConfigEvent.Reloading reloading){
-        BLACKLISTED_ELEMENTS.clear();
+    public void onConfigReload(ModConfigEvent.Reloading reloading){ BLACKLISTED_ELEMENTS.clear(); }
+
+    private static Boolean considerElementNameForBlacklist(String elementName) {
+        Boolean result = DarkConfig.CLIENT.METHOD_SHADER_BLACKLIST.get().stream().anyMatch(elementName::contains);
+        BLACKLISTED_ELEMENTS.put(elementName, result);
+        return result;
+    }
+
+    public static Boolean isElementNameBlacklisted(String elementName) {
+        Boolean elementNameIsBlacklisted = BLACKLISTED_ELEMENTS.get(elementName);
+        if (elementNameIsBlacklisted == null) {
+            elementNameIsBlacklisted = considerElementNameForBlacklist(elementName);
+        }
+        return elementNameIsBlacklisted;
     }
 
     @SubscribeEvent

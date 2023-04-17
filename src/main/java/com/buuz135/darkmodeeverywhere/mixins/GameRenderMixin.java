@@ -1,7 +1,6 @@
 package com.buuz135.darkmodeeverywhere.mixins;
 
 import com.buuz135.darkmodeeverywhere.ClientProxy;
-import com.buuz135.darkmodeeverywhere.DarkConfig;
 import com.buuz135.darkmodeeverywhere.RenderedClassesTracker;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.renderer.GameRenderer;
@@ -11,9 +10,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Mixin(GameRenderer.class)
 public class GameRenderMixin {
 
@@ -21,17 +17,18 @@ public class GameRenderMixin {
     private static void getPositionTexShader(CallbackInfoReturnable<ShaderInstance> cir) {
         if (ClientProxy.SELECTED_SHADER != null){
             var element = getCallerCallerClassName();
-            if (element == null){
+            if (element == null) {
                 cir.setReturnValue(ClientProxy.REGISTERED_SHADERS.get(ClientProxy.SELECTED_SHADER));
-            } else {
-                var elementName = element.getClassName() + ":" + element.getMethodName();
-                RenderedClassesTracker.add(elementName);
-                if (ClientProxy.BLACKLISTED_ELEMENTS.contains(elementName)){
-                    cir.setReturnValue(ClientProxy.REGISTERED_SHADERS.get(ClientProxy.SELECTED_SHADER));
-                }else if (DarkConfig.CLIENT.METHOD_SHADER_BLACKLIST.get().stream().noneMatch(el -> elementName.contains(el))){
-                    ClientProxy.BLACKLISTED_ELEMENTS.add(elementName);
-                    cir.setReturnValue(ClientProxy.REGISTERED_SHADERS.get(ClientProxy.SELECTED_SHADER));
-                }
+                return;
+            }
+
+            var elementName = element.getClassName() + ":" + element.getMethodName();
+            RenderedClassesTracker.add(elementName);
+
+            Boolean elementNameIsBlacklisted = ClientProxy.isElementNameBlacklisted(elementName);
+
+            if (!elementNameIsBlacklisted) {
+                cir.setReturnValue(ClientProxy.REGISTERED_SHADERS.get(ClientProxy.SELECTED_SHADER));
             }
         }
     }
