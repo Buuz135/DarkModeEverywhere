@@ -1,7 +1,6 @@
 package com.buuz135.darkmodeeverywhere.mixins;
 
 import com.buuz135.darkmodeeverywhere.ClientProxy;
-import com.buuz135.darkmodeeverywhere.RenderedClassesTracker;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.ShaderInstance;
@@ -23,8 +22,6 @@ public class GameRenderMixin {
             }
 
             var elementName = element.getClassName() + ":" + element.getMethodName();
-            RenderedClassesTracker.add(elementName);
-
             boolean elementNameIsBlacklisted = ClientProxy.isElementNameBlacklisted(elementName);
 
             if (!elementNameIsBlacklisted) {

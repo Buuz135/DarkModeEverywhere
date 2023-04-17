@@ -74,6 +74,7 @@ public class ClientProxy {
         DarkModeEverywhere.LOGGER.debug("Considering " + elementName + " for element blacklist");
         boolean result = DarkConfig.CLIENT.METHOD_SHADER_BLACKLIST.get().stream().anyMatch(elementName::contains);
         BLACKLISTED_ELEMENTS.put(elementName, result);
+        RenderedClassesTracker.add(elementName);
         return result;
     }
 
