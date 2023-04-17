@@ -25,7 +25,7 @@ public class GameRenderMixin {
             var elementName = element.getClassName() + ":" + element.getMethodName();
             RenderedClassesTracker.add(elementName);
 
-            Boolean elementNameIsBlacklisted = ClientProxy.isElementNameBlacklisted(elementName);
+            boolean elementNameIsBlacklisted = ClientProxy.isElementNameBlacklisted(elementName);
 
             if (!elementNameIsBlacklisted) {
                 cir.setReturnValue(ClientProxy.REGISTERED_SHADERS.get(ClientProxy.SELECTED_SHADER));

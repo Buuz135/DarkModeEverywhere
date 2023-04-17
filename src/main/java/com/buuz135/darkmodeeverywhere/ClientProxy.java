@@ -71,13 +71,13 @@ public class ClientProxy {
     @SubscribeEvent
     public void onConfigReload(ModConfigEvent.Reloading reloading){ BLACKLISTED_ELEMENTS.clear(); }
 
-    private static Boolean considerElementNameForBlacklist(String elementName) {
-        Boolean result = DarkConfig.CLIENT.METHOD_SHADER_BLACKLIST.get().stream().anyMatch(elementName::contains);
+    private static boolean considerElementNameForBlacklist(String elementName) {
+        boolean result = DarkConfig.CLIENT.METHOD_SHADER_BLACKLIST.get().stream().anyMatch(elementName::contains);
         BLACKLISTED_ELEMENTS.put(elementName, result);
         return result;
     }
 
-    public static Boolean isElementNameBlacklisted(String elementName) {
+    public static boolean isElementNameBlacklisted(String elementName) {
         Boolean elementNameIsBlacklisted = BLACKLISTED_ELEMENTS.get(elementName);
         if (elementNameIsBlacklisted == null) {
             elementNameIsBlacklisted = considerElementNameForBlacklist(elementName);
