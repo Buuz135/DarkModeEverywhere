@@ -79,14 +79,11 @@ public class ClientProxy {
     }
 
     public static boolean isElementNameBlacklisted(String elementName) {
-        boolean elementNameIsBlacklisted;
         try {
-            elementNameIsBlacklisted = BLACKLISTED_ELEMENTS.get(elementName);
+            return BLACKLISTED_ELEMENTS.get(elementName);
         } catch (NullPointerException error) {
-            elementNameIsBlacklisted = considerElementNameForBlacklist(elementName);
+            return considerElementNameForBlacklist(elementName);
         }
-
-        return elementNameIsBlacklisted;
     }
 
     @SubscribeEvent
