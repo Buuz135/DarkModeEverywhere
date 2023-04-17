@@ -48,7 +48,6 @@ public class ClientProxy {
         SHADER_VALUES = new HashMap<>();
         List<ResourceLocation> alreadyPendingShaders = new ArrayList<>();
         for (ShaderConfig.ShaderValue shaderValue : CONFIG.getShaders()) {
-
             SHADER_VALUES.put(shaderValue.resourceLocation, shaderValue);
             if (alreadyPendingShaders.contains(shaderValue.resourceLocation)) continue;
             try {
