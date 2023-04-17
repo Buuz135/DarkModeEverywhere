@@ -143,10 +143,10 @@ dependencies {
     // that the dep is a ForgeGradle 'patcher' dependency, and its patches will be applied.
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft 'net.minecraftforge:forge:1.19.4-45.0.43'
-    compileOnly fg.deobf("mezz.jei:jei-1.19.1-common-api:11.2.0.241")
-    compileOnly fg.deobf("mezz.jei:jei-1.19.1-forge-api:11.2.0.241")
+    compileOnly fg.deobf("mezz.jei:jei-1.19.4-common-api:13.1.0.5")
+    compileOnly fg.deobf("mezz.jei:jei-1.19.4-forge-api:13.1.0.5")
     // at runtime, use the full JEI jar for Forge
-    runtimeOnly fg.deobf("mezz.jei:jei-1.19.1-forge:11.2.0.241")
+    runtimeOnly fg.deobf("mezz.jei:jei-1.19.4-forge:13.1.0.5")
 
     // Real mod deobf dependency examples - these get remapped to your current mappings
     // compileOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}:api") // Adds JEI API as a compile dependency
