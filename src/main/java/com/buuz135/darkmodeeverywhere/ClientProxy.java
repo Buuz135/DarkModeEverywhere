@@ -72,16 +72,20 @@ public class ClientProxy {
     public void onConfigReload(ModConfigEvent.Reloading reloading){ BLACKLISTED_ELEMENTS.clear(); }
 
     private static boolean considerElementNameForBlacklist(String elementName) {
+        DarkModeEverywhere.LOGGER.debug("Considering " + elementName + " for element blacklist");
         boolean result = DarkConfig.CLIENT.METHOD_SHADER_BLACKLIST.get().stream().anyMatch(elementName::contains);
         BLACKLISTED_ELEMENTS.put(elementName, result);
         return result;
     }
 
     public static boolean isElementNameBlacklisted(String elementName) {
-        Boolean elementNameIsBlacklisted = BLACKLISTED_ELEMENTS.get(elementName);
-        if (elementNameIsBlacklisted == null) {
+        boolean elementNameIsBlacklisted;
+        try {
+            elementNameIsBlacklisted = BLACKLISTED_ELEMENTS.get(elementName);
+        } catch (NullPointerException error) {
             elementNameIsBlacklisted = considerElementNameForBlacklist(elementName);
         }
+
         return elementNameIsBlacklisted;
     }
 
