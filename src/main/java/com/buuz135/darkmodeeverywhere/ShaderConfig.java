@@ -2,6 +2,7 @@ package com.buuz135.darkmodeeverywhere;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
 
@@ -75,10 +76,10 @@ public class ShaderConfig {
 
     public static class ShaderValue {
         public ResourceLocation resourceLocation;
-        public Component displayName;
+        public MutableComponent displayName;
         public int darkColorReplacement;
 
-        public ShaderValue(ResourceLocation resourceLocation, Component displayName, int darkColorReplacement) {
+        public ShaderValue(ResourceLocation resourceLocation, MutableComponent displayName, int darkColorReplacement) {
             this.resourceLocation = resourceLocation;
             this.displayName = displayName;
             this.darkColorReplacement = darkColorReplacement;

@@ -4,11 +4,13 @@ package com.buuz135.darkmodeeverywhere;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.event.RegisterShadersEvent;
 import net.minecraftforge.client.event.ScreenEvent;
@@ -51,7 +53,7 @@ public class ClientProxy {
             SHADER_VALUES.put(shaderValue.resourceLocation, shaderValue);
             if (alreadyPendingShaders.contains(shaderValue.resourceLocation)) continue;
             try {
-                event.registerShader(new ShaderInstance(event.getResourceManager(), shaderValue.resourceLocation, DefaultVertexFormat.POSITION_TEX), shaderInstance -> {
+                event.registerShader(new ShaderInstance(event.getResourceProvider(), shaderValue.resourceLocation, DefaultVertexFormat.POSITION_TEX), shaderInstance -> {
                     DarkModeEverywhere.LOGGER.debug("Registered shader " + shaderValue.resourceLocation);
                     REGISTERED_SHADERS.put(shaderValue.resourceLocation, shaderInstance);
                     REGISTERED_SHADER_LOCATIONS.add(shaderValue.resourceLocation);
@@ -110,6 +112,14 @@ public class ClientProxy {
         return REGISTERED_SHADER_LOCATIONS.get(nextShaderIndex);
     }
 
+    private Tooltip getShaderSwitchButtonTooltip() {
+        MutableComponent tooltipComponent = SELECTED_SHADER == null ? Component.translatable("gui." + DarkModeEverywhere.MODID + ".light_mode") : SHADER_VALUES.get(SELECTED_SHADER).displayName.copy();
+        tooltipComponent.append(Component.literal("\n"));
+        tooltipComponent.append(Component.translatable("gui.tooltip." + DarkModeEverywhere.MODID + ".shader_switch_tooltip").withStyle(ChatFormatting.GRAY));
+
+        return Tooltip.create(tooltipComponent);
+    }
+
     @SubscribeEvent
     public void openGui(ScreenEvent.Init event){
        if (event.getScreen() instanceof AbstractContainerScreen || (DarkConfig.CLIENT.SHOW_BUTTON_IN_TITLE_SCREEN.get() && event.getScreen() instanceof TitleScreen)){
@@ -120,22 +130,20 @@ public class ClientProxy {
                y = DarkConfig.CLIENT.TITLE_SCREEN_BUTTON_Y_OFFSET.get();
            }
 
-           event.addListener(
-               new Button(
-                   x, event.getScreen().height - 24 - y, 60, 20,
-                   Component.translatable("gui." + DarkModeEverywhere.MODID + ".dark_mode"),
-                   button -> {
-                       SELECTED_SHADER = getNextShaderResourceLocation();
-                       CONFIG.setSelectedShader(SELECTED_SHADER);
-                   },
-                   (button, poseStack, p_93755_, p_93756_) -> {
-                       List<Component> tooltip = new ArrayList<>();
-                       tooltip.add(SELECTED_SHADER == null ? Component.translatable("gui." + DarkModeEverywhere.MODID + ".light_mode") : SHADER_VALUES.get(SELECTED_SHADER).displayName);
-                       tooltip.add(Component.translatable("gui.tooltip." + DarkModeEverywhere.MODID + ".shader_switch_tooltip").withStyle(ChatFormatting.GRAY));
-                       event.getScreen().renderComponentTooltip(poseStack, tooltip, p_93755_, p_93756_);
-                   }
-               )
-           );
+           Button.Builder buttonBuilder = Button.builder(
+               Component.translatable("gui." + DarkModeEverywhere.MODID + ".dark_mode"),
+               button -> {
+                   SELECTED_SHADER = getNextShaderResourceLocation();
+                   CONFIG.setSelectedShader(SELECTED_SHADER);
+                   button.setTooltip(getShaderSwitchButtonTooltip());
+               });
+
+           buttonBuilder.pos(x, event.getScreen().height - 24 - y);
+           buttonBuilder.size(60, 20);
+
+           buttonBuilder.tooltip(getShaderSwitchButtonTooltip());
+           Button button = buttonBuilder.build();
+           event.addListener(button);
        }
     }
 }
