@@ -131,8 +131,16 @@ repositories {
     // }
     maven {
         // location of the maven that hosts JEI files
-        name = "Progwml6 maven"
-        url = "https://dvs1.progwml6.com/files/maven/"
+        name "Progwml6 maven"
+        url "https://dvs1.progwml6.com/files/maven/"
+    }
+    maven {
+        // CurseMaven
+        name "cursemaven"
+        url "https://cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
     }
 }
 
@@ -145,6 +153,8 @@ dependencies {
     compileOnly fg.deobf("mezz.jei:jei-1.19.1-forge-api:11.2.0.241")
     // at runtime, use the full JEI jar for Forge
     runtimeOnly fg.deobf("mezz.jei:jei-1.19.1-forge:11.2.0.241")
+    // and the full Configured jar for Forge
+    runtimeOnly fg.deobf("curse.maven:Configured-457570:4462837")
 
     // Real mod deobf dependency examples - these get remapped to your current mappings
     // compileOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}:api") // Adds JEI API as a compile dependency
