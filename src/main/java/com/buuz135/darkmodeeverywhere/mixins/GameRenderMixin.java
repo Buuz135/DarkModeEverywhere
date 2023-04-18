@@ -11,13 +11,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(GameRenderer.class)
 public class GameRenderMixin {
+    private static void replaceDefaultShaderWithSelectedShader(CallbackInfoReturnable<ShaderInstance> cir) {
+        cir.setReturnValue(ClientProxy.REGISTERED_SHADERS.get(ClientProxy.SELECTED_SHADER));
+    }
 
     @Inject(method = "getPositionTexShader", at = @At("HEAD"), cancellable = true)
     private static void getPositionTexShader(CallbackInfoReturnable<ShaderInstance> cir) {
         if (ClientProxy.SELECTED_SHADER != null){
             var element = getCallerCallerClassName();
             if (element == null) {
-                cir.setReturnValue(ClientProxy.REGISTERED_SHADERS.get(ClientProxy.SELECTED_SHADER));
+                replaceDefaultShaderWithSelectedShader(cir);
                 return;
             }
 
@@ -25,7 +28,7 @@ public class GameRenderMixin {
             boolean elementNameIsBlacklisted = ClientProxy.isElementNameBlacklisted(elementName);
 
             if (!elementNameIsBlacklisted) {
-                cir.setReturnValue(ClientProxy.REGISTERED_SHADERS.get(ClientProxy.SELECTED_SHADER));
+                replaceDefaultShaderWithSelectedShader(cir);
             }
         }
     }
