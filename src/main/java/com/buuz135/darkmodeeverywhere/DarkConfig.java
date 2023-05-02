@@ -30,7 +30,8 @@ public class DarkConfig {
         public Client() {
             final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
             List<String> defaultBlacklist = new ArrayList<>(Arrays.asList(
-                "mezz.jei.common.render.FluidTankRenderer:drawTextureWithMasking",
+                "mezz.jei.common.render.FluidTankRenderer:drawTextureWithMasking",//1.19.1 JEI Path
+                "mezz.jei.library.render.FluidTankRenderer:drawTextureWithMasking",//1.19.2+ JEI Path
                 "renderCrosshair",
                 "net.minecraft.client.gui.screens.TitleScreen",
                 "renderSky",
