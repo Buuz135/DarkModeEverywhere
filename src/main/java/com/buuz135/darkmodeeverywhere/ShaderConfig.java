@@ -39,7 +39,7 @@ public class ShaderConfig {
         } else {
             selectedShader = resourceLocation.toString();
         }
-        DarkModeEverywhere.LOGGER.debug("Selected shader updated to " + selectedShader);
+        DarkModeEverywhere.LOGGER.debug("Selected shader updated to {}", selectedShader);
         new Thread(ShaderConfig::createDefaultConfigFile).start();
     }
 

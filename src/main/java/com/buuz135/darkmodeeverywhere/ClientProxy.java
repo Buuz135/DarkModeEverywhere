@@ -53,7 +53,7 @@ public class ClientProxy {
             if (SHADER_VALUES.put(shaderValue.resourceLocation, shaderValue) == null) {
                 try {
                     event.registerShader(new ShaderInstance(event.getResourceManager(), shaderValue.resourceLocation, DefaultVertexFormat.POSITION_TEX), shaderInstance -> {
-                        DarkModeEverywhere.LOGGER.debug("Registered shader " + shaderValue.resourceLocation);
+                        DarkModeEverywhere.LOGGER.debug("Registered shader {}", shaderValue.resourceLocation);
                         REGISTERED_SHADERS.put(shaderValue.resourceLocation, shaderInstance);
                         REGISTERED_SHADER_LOCATIONS.add(shaderValue.resourceLocation);
                     });
@@ -77,7 +77,7 @@ public class ClientProxy {
 
     public static boolean isElementNameBlacklisted(String elementName) {
         return BLACKLISTED_ELEMENTS.computeIfAbsent(elementName, (String name) -> {
-            DarkModeEverywhere.LOGGER.debug("Considering " + name + " for element blacklist");
+            DarkModeEverywhere.LOGGER.debug("Considering {} for element blacklist", name);
             RenderedClassesTracker.add(name);
             return blacklistContains(MODDED_BLACKLIST, name) || blacklistContains(DarkConfig.CLIENT.METHOD_SHADER_BLACKLIST.get(), name);
         });
