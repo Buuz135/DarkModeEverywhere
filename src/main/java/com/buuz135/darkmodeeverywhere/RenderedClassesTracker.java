@@ -13,7 +13,7 @@ public class RenderedClassesTracker {
     public static void start(){
         new Thread(() -> {
             while (true) {
-                if (DarkConfig.CLIENT.METHOD_SHADER_DUMP.get()){
+                if (DarkConfig.CLIENT.METHOD_SHADER_DUMP.get() && !TRACKED.isEmpty()){
                     LOGGER.info("--------------------------------------------------");
                     TRACKED.forEach(LOGGER::info);
                     LOGGER.info("--------------------------------------------------");
