@@ -2,6 +2,8 @@ package com.buuz135.darkmodeeverywhere;
 
 
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
+import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
@@ -24,7 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class ClientProxy {
-    public static HashMap<String, Boolean> BLACKLISTED_ELEMENTS = new HashMap<>();
+    public static Object2BooleanMap<String> BLACKLISTED_ELEMENTS = new Object2BooleanOpenHashMap<>();
     public static List<String> MODDED_BLACKLIST = new ArrayList<>();
 
     public static ShaderConfig CONFIG = new ShaderConfig();
@@ -70,20 +72,16 @@ public class ClientProxy {
     @SubscribeEvent
     public void onConfigReload(ModConfigEvent.Reloading reloading){ BLACKLISTED_ELEMENTS.clear(); }
 
-    private static boolean considerElementNameForBlacklist(String elementName) {
-        DarkModeEverywhere.LOGGER.debug("Considering " + elementName + " for element blacklist");
-        boolean result = DarkConfig.CLIENT.METHOD_SHADER_BLACKLIST.get().stream().anyMatch(elementName::contains);
-        BLACKLISTED_ELEMENTS.put(elementName, result);
-        RenderedClassesTracker.add(elementName);
-        return result;
+    private static boolean blacklistContains(List<String> blacklist, String elementName) {
+        return blacklist.stream().anyMatch(elementName::contains);
     }
 
     public static boolean isElementNameBlacklisted(String elementName) {
-        try {
-            return BLACKLISTED_ELEMENTS.get(elementName);
-        } catch (NullPointerException error) {
-            return considerElementNameForBlacklist(elementName);
-        }
+        return BLACKLISTED_ELEMENTS.computeIfAbsent(elementName, (String name) -> {
+            DarkModeEverywhere.LOGGER.debug("Considering " + name + " for element blacklist");
+            RenderedClassesTracker.add(name);
+            return blacklistContains(MODDED_BLACKLIST, name) || blacklistContains(DarkConfig.CLIENT.METHOD_SHADER_BLACKLIST.get(), name);
+        });
     }
 
     @SubscribeEvent
