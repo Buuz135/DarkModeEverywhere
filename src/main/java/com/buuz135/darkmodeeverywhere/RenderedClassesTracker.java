@@ -1,21 +1,21 @@
 package com.buuz135.darkmodeeverywhere;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.util.HashMap;
+import com.mojang.logging.LogUtils;
+import java.util.HashSet;
+import java.util.Set;
+import org.slf4j.Logger;
 
 public class RenderedClassesTracker {
 
-    private static final HashMap<String, Boolean> TRACKED = new HashMap<>();
-    private static final Logger LOGGER = LogManager.getLogger("DME METHOD DUMP");
+    private static final Set<String> TRACKED = new HashSet<>();
+    private static final Logger LOGGER = LogUtils.getLogger();
 
     public static void start(){
         new Thread(() -> {
             while (true) {
-                if (DarkConfig.CLIENT.METHOD_SHADER_DUMP.get()){
+                if (DarkConfig.CLIENT.METHOD_SHADER_DUMP.get() && !TRACKED.isEmpty()){
                     LOGGER.info("--------------------------------------------------");
-                    TRACKED.forEach((key, value) -> LOGGER.info(key));
+                    TRACKED.forEach(LOGGER::info);
                     LOGGER.info("--------------------------------------------------");
                     TRACKED.clear();
                 }
@@ -29,7 +29,7 @@ public class RenderedClassesTracker {
     }
 
     public static void add(String element){
-        if (DarkConfig.CLIENT.METHOD_SHADER_DUMP.get() && !TRACKED.containsKey(element)) TRACKED.put(element, true);
+        if (DarkConfig.CLIENT.METHOD_SHADER_DUMP.get()) TRACKED.add(element);
     }
 
 }

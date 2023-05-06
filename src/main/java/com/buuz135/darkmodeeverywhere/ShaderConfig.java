@@ -40,7 +40,7 @@ public class ShaderConfig {
         } else {
             selectedShader = resourceLocation.toString();
         }
-        DarkModeEverywhere.LOGGER.debug("Selected shader updated to " + selectedShader);
+        DarkModeEverywhere.LOGGER.debug("Selected shader updated to {}", selectedShader);
         new Thread(ShaderConfig::createDefaultConfigFile).start();
     }
 
@@ -48,15 +48,17 @@ public class ShaderConfig {
         return selectedShader;
     }
 
+    private static Gson createGson() {
+        return new GsonBuilder().setPrettyPrinting().registerTypeAdapter(Component.class, new Component.Serializer()).create();
+    }
+
     public static void load(){
         if (!configFilePath.exists()){
             createDefaultConfigFile();
         }
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        try {
-            FileReader reader = new FileReader(configFilePath);
+        Gson gson = createGson();
+        try (FileReader reader = new FileReader(configFilePath)) {
             ClientProxy.CONFIG = gson.fromJson(reader, ShaderConfig.class);
-            reader.close();
         } catch (Exception e) {
             e.printStackTrace();
             createDefaultConfigFile();
@@ -64,11 +66,9 @@ public class ShaderConfig {
     }
 
     private static void createDefaultConfigFile(){
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        try {
-            FileWriter fileWriter = new FileWriter(ShaderConfig.configFilePath);
+        Gson gson = createGson();
+        try (FileWriter fileWriter = new FileWriter(ShaderConfig.configFilePath)) {
             gson.toJson(ClientProxy.CONFIG, fileWriter);
-            fileWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
