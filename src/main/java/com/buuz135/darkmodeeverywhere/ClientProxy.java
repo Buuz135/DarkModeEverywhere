@@ -54,7 +54,7 @@ public class ClientProxy {
         for (ShaderConfig.ShaderValue shaderValue : CONFIG.getShaders()) {
             if (SHADER_VALUES.put(shaderValue.resourceLocation, shaderValue) == null) {
                 try {
-                    event.registerShader(new ShaderInstance(event.getResourceManager(), shaderValue.resourceLocation, DefaultVertexFormat.POSITION_TEX), shaderInstance -> {
+                    event.registerShader(new ShaderInstance(event.getResourceProvider(), shaderValue.resourceLocation, DefaultVertexFormat.POSITION_TEX), shaderInstance -> {
                         DarkModeEverywhere.LOGGER.debug("Registered shader {}", shaderValue.resourceLocation);
                         REGISTERED_SHADERS.put(shaderValue.resourceLocation, shaderInstance);
                         REGISTERED_SHADER_LOCATIONS.add(shaderValue.resourceLocation);
