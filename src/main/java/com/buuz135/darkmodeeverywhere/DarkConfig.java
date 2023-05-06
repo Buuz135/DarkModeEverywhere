@@ -30,15 +30,16 @@ public class DarkConfig {
         public Client() {
             final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
             List<String> defaultBlacklist = new ArrayList<>(Arrays.asList(
-                "mezz.jei.common.render.FluidTankRenderer:drawTextureWithMasking",
-                "renderCrosshair",
+                "mezz.jei.common.render.FluidTankRenderer:drawTextureWithMasking",//1.19.1 JEI Path
+                "mezz.jei.library.render.FluidTankRenderer:drawTextureWithMasking",//1.19.2+ JEI Path
+                "renderCrosshair", "m_93080_",
                 "net.minecraft.client.gui.screens.TitleScreen",
-                "renderSky",
-                "renderHotbar",
+                "renderSky", "m_202423_",
+                "renderHotbar", "m_93009_", "m_193837_",//Normal hotbar, and spectator hotbar
                 "setupOverlayRenderState",
                 "net.minecraftforge.client.gui.overlay.ForgeGui",
                 "renderFood",
-                "renderExperienceBar"
+                "renderExperienceBar", "m_93071_"
             ));
 
             String TRANSLATION_KEY_BASE = "config." + DarkModeEverywhere.MODID + ".";
