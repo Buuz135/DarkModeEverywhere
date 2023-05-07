@@ -39,6 +39,7 @@ public class DarkConfig {
                     "setupOverlayRenderState",
                     "net.minecraftforge.client.gui.overlay.ForgeGui",
                     "renderFood",
+                    "squeek.appleskin.client.HUDOverlayHandler",
                     "renderExperienceBar", "m_93071_"
             ));
 
