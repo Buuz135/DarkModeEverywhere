@@ -29,7 +29,7 @@ public class FontMixin {
         if (color == 0) return color;
         if (ClientProxy.SELECTED_SHADER != null && Minecraft.getInstance().screen != null) {
             int thre = 65;
-            ShaderConfig.Value value = ClientProxy.SHADER_VALUES.get(ClientProxy.SELECTED_SHADER);
+            ShaderConfig.ShaderValue value = ClientProxy.SHADER_VALUES.get(ClientProxy.SELECTED_SHADER);
             if (value.darkColorReplacement == -1) return color;
             if (FastColor.ARGB32.red(color) < thre && FastColor.ARGB32.green(color)  < thre && FastColor.ARGB32.blue(color)  < thre){
                 return value.darkColorReplacement;

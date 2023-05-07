@@ -2,7 +2,12 @@ package com.buuz135.darkmodeeverywhere;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.FileReader;
@@ -13,20 +18,21 @@ import java.util.List;
 
 public class ShaderConfig {
 
-    private List<Value> shaders;
+    private List<ShaderValue> shaders;
     private int version;
     private String selectedShader;
+    private static final File configFilePath = new File("config" + File.separator + "darkmodeeverywhereshaders.json");
 
     public ShaderConfig() {
         this.shaders = new ArrayList<>();
         this.version = 1;
-        this.shaders.add(new Value(new ResourceLocation("darkmodeeverywhere", "perfect_dark"), "Perfect Dark", 16777215));
-        this.shaders.add(new Value(new ResourceLocation("darkmodeeverywhere", "less_perfect_dark"), "Less Perfect Dark", 16777215));
-        this.shaders.add(new Value(new ResourceLocation("darkmodeeverywhere", "toasted_light"), "Toasted Light Mode", 16777215));
+        this.shaders.add(new ShaderValue(new ResourceLocation("darkmodeeverywhere", "perfect_dark"), new TranslatableComponent("gui.darkmodeeverywhere.perfect_dark"), 16777215));
+        this.shaders.add(new ShaderValue(new ResourceLocation("darkmodeeverywhere", "less_perfect_dark"), new TranslatableComponent("gui.darkmodeeverywhere.less_perfect_dark"), 16777215));
+        this.shaders.add(new ShaderValue(new ResourceLocation("darkmodeeverywhere", "toasted_light"), new TranslatableComponent("gui.darkmodeeverywhere.toasted_light"), 16777215));
         this.selectedShader = null;
     }
 
-    public List<Value> getShaders() {
+    public List<ShaderValue> getShaders() {
         return shaders;
     }
 
@@ -36,50 +42,52 @@ public class ShaderConfig {
         } else {
             selectedShader = resourceLocation.toString();
         }
-        new Thread(() -> {
-            createDefault(new File("config" + File.separator + "darkmodeeverywhereshaders.json"));
-        }).start();
+        DarkModeEverywhere.LOGGER.debug("Selected shader updated to {}", selectedShader);
+        new Thread(ShaderConfig::createDefaultConfigFile).start();
     }
 
     public String getSelectedShader() {
         return selectedShader;
     }
 
+    private static Gson createGson() {
+        Component.Serializer componentSerializer = new Component.Serializer();
+        return new GsonBuilder()
+                .setPrettyPrinting()
+                .registerTypeAdapter(TextComponent.class, componentSerializer)
+                .registerTypeAdapter(TranslatableComponent.class, componentSerializer)
+                .create();
+    }
+
     public static void load(){
-        File file = new File("config" + File.separator + "darkmodeeverywhereshaders.json");
-        if (!file.exists()){
-            createDefault(file);
+        if (!configFilePath.exists()){
+            createDefaultConfigFile();
         }
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        try {
-            FileReader reader = new FileReader(file);
+        Gson gson = createGson();
+        try (FileReader reader = new FileReader(configFilePath)) {
             ClientProxy.CONFIG = gson.fromJson(reader, ShaderConfig.class);
-            reader.close();
         } catch (Exception e) {
             e.printStackTrace();
-            createDefault(file);
+            createDefaultConfigFile();
         }
     }
 
-    private static void createDefault(File file){
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        try {
-            FileWriter fileWriter = new FileWriter(file);
+    private static void createDefaultConfigFile(){
+        Gson gson = createGson();
+        try (FileWriter fileWriter = new FileWriter(ShaderConfig.configFilePath)) {
             gson.toJson(ClientProxy.CONFIG, fileWriter);
-            fileWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public class Value{
-
-        public String resourceLocation;
-        public String displayName;
+    public static class ShaderValue {
+        public ResourceLocation resourceLocation;
+        public MutableComponent displayName;
         public int darkColorReplacement;
 
-        public Value(ResourceLocation resourceLocation, String displayName, int darkColorReplacement) {
-            this.resourceLocation = resourceLocation.toString();
+        public ShaderValue(ResourceLocation resourceLocation, MutableComponent displayName, int darkColorReplacement) {
+            this.resourceLocation = resourceLocation;
             this.displayName = displayName;
             this.darkColorReplacement = darkColorReplacement;
         }
