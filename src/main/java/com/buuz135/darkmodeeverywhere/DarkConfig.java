@@ -40,7 +40,8 @@ public class DarkConfig {
                     "net.minecraftforge.client.gui.overlay.ForgeGui",
                     "renderFood",
                     "squeek.appleskin.client.HUDOverlayHandler",
-                    "renderExperienceBar", "m_93071_"
+                    "renderExperienceBar", "m_93071_",
+                    "OnlineServerEntry:drawIcon", "OnlineServerEntry:m_99889_" // Server icons
             ));
 
             String TRANSLATION_KEY_BASE = "config." + DarkModeEverywhere.MODID + ".";
