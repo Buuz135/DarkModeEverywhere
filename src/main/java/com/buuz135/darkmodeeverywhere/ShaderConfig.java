@@ -7,7 +7,6 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
-import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.FileReader;
@@ -56,6 +55,7 @@ public class ShaderConfig {
                 .setPrettyPrinting()
                 .registerTypeAdapter(TextComponent.class, componentSerializer)
                 .registerTypeAdapter(TranslatableComponent.class, componentSerializer)
+                .registerTypeAdapter(MutableComponent.class, componentSerializer)
                 .create();
     }
 
