@@ -49,7 +49,10 @@ public class ShaderConfig {
     }
 
     private static Gson createGson() {
-        return new GsonBuilder().setPrettyPrinting().registerTypeAdapter(Component.class, new Component.Serializer()).create();
+        return new GsonBuilder()
+                .setPrettyPrinting()
+                .registerTypeAdapter(MutableComponent.class, new Component.Serializer())
+                .create();
     }
 
     public static void load(){
