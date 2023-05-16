@@ -72,7 +72,7 @@ public class ClientProxy {
     @SubscribeEvent
     public void onConfigReload(ModConfigEvent.Reloading reloading){ BLACKLISTED_ELEMENTS.clear(); }
 
-    private static boolean blacklistContains(List<String> blacklist, String elementName) {
+    private static boolean blacklistContains(List<? extends String> blacklist, String elementName) {
         return blacklist.stream().anyMatch(elementName::contains);
     }
 
