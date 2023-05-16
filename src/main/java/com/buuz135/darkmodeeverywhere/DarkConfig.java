@@ -40,7 +40,8 @@ public class DarkConfig {
                 "setupOverlayRenderState",
                 "net.minecraftforge.client.gui.overlay.ForgeGui",
                 "renderFood",
-                "renderExperienceBar", "m_93071_"
+                "renderExperienceBar", "m_93071_",
+                "OnlineServerEntry:drawIcon", "OnlineServerEntry:m_99889_" // Multiplayer Server icons
             ));
 
             Predicate<Object> blacklistElementValidator = (Object element) -> true;
