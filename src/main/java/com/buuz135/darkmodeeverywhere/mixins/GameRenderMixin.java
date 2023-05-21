@@ -11,6 +11,11 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.stream.Stream;
+
+import java.lang.StackWalker;
+import java.lang.StackWalker.StackFrame;
+
 @Mixin(GameRenderer.class)
 public class GameRenderMixin {
     private static final String SET_SHADER_METHOD_NAME = ObfuscationReflectionHelper.remapName(INameMappingService.Domain.METHOD, "m_157427_");
@@ -21,15 +26,15 @@ public class GameRenderMixin {
 
     @Inject(method = "getPositionTexShader", at = @At("HEAD"), cancellable = true)
     private static void getPositionTexShader(CallbackInfoReturnable<ShaderInstance> cir) {
+
         if (ClientProxy.SELECTED_SHADER != null){
-            var element = getCallerCallerClassName();
-            if (element == null) {
+            var callerClassName = getCallerClassName();
+            if (callerClassName == null) {
                 replaceDefaultShaderWithSelectedShader(cir);
                 return;
             }
 
-            var elementName = element.getClassName() + ":" + element.getMethodName();
-            boolean elementNameIsBlacklisted = ClientProxy.isElementNameBlacklisted(elementName);
+            boolean elementNameIsBlacklisted = ClientProxy.isElementNameBlacklisted(callerClassName);
 
             if (!elementNameIsBlacklisted) {
                 replaceDefaultShaderWithSelectedShader(cir);
@@ -37,18 +42,21 @@ public class GameRenderMixin {
         }
     }
 
-    private static StackTraceElement getCallerCallerClassName() {
-        StackTraceElement[] stElements = Thread.currentThread().getStackTrace();
-        for (int i=1; i<stElements.length; i++) {
-            StackTraceElement ste = stElements[i];
-            String className = ste.getClassName();
-            if (!className.equals(GameRenderer.class.getName())
-                && className.indexOf("java.lang.Thread") != 0
-                && !ste.getMethodName().equals(SET_SHADER_METHOD_NAME)
-                && !className.equals(GuiComponent.class.getName())) {
-                return ste;
-            }
-        }
-        return null;
+    private static String walkForCallerClassName(Stream<StackFrame> stackFrameStream) {
+        return stackFrameStream
+            .filter(frame -> !(
+                frame.getClassName().equals(GameRenderer.class.getName())
+                || frame.getClassName().startsWith("java.lang.Thread")
+                || frame.getMethodName().equals(SET_SHADER_METHOD_NAME)
+                || frame.getClassName().equals(GuiComponent.class.getName())
+            ))
+            .findFirst()
+            .map(f -> f.getClassName() + ":" + f.getMethodName())
+            .orElse(null);
+    }
+
+    private static String getCallerClassName() {
+        return StackWalker.getInstance()
+            .walk(GameRenderMixin::walkForCallerClassName);
     }
 }
