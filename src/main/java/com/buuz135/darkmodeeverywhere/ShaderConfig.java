@@ -2,6 +2,7 @@ package com.buuz135.darkmodeeverywhere;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
 
@@ -47,11 +48,18 @@ public class ShaderConfig {
         return selectedShader;
     }
 
+    private static Gson createGson() {
+        return new GsonBuilder()
+                .setPrettyPrinting()
+                .registerTypeAdapter(MutableComponent.class, new Component.Serializer())
+                .create();
+    }
+
     public static void load(){
         if (!configFilePath.exists()){
             createDefaultConfigFile();
         }
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        Gson gson = createGson();
         try {
             FileReader reader = new FileReader(configFilePath);
             ClientProxy.CONFIG = gson.fromJson(reader, ShaderConfig.class);
@@ -63,7 +71,7 @@ public class ShaderConfig {
     }
 
     private static void createDefaultConfigFile(){
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        Gson gson = createGson();
         try {
             FileWriter fileWriter = new FileWriter(ShaderConfig.configFilePath);
             gson.toJson(ClientProxy.CONFIG, fileWriter);
