@@ -1,9 +1,11 @@
 package com.buuz135.darkmodeeverywhere.mixins;
 
 import com.buuz135.darkmodeeverywhere.ClientProxy;
+import cpw.mods.modlauncher.api.INameMappingService;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.ShaderInstance;
+import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -16,6 +18,8 @@ import java.lang.StackWalker.StackFrame;
 
 @Mixin(GameRenderer.class)
 public class GameRenderMixin {
+    private static final String SET_SHADER_METHOD_NAME = ObfuscationReflectionHelper.remapName(INameMappingService.Domain.METHOD, "m_157427_");
+
     private static void replaceDefaultShaderWithSelectedShader(CallbackInfoReturnable<ShaderInstance> cir) {
         cir.setReturnValue(ClientProxy.REGISTERED_SHADERS.get(ClientProxy.SELECTED_SHADER));
     }
