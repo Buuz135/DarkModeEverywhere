@@ -7,6 +7,7 @@ import net.minecraftforge.fml.event.config.ModConfigEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class DarkConfig {
 
@@ -24,7 +25,7 @@ public class DarkConfig {
         public ForgeConfigSpec.ConfigValue<Integer> TITLE_SCREEN_BUTTON_X_OFFSET;
         public ForgeConfigSpec.ConfigValue<Integer> TITLE_SCREEN_BUTTON_Y_OFFSET;
         public ForgeConfigSpec.ConfigValue<Boolean> SHOW_BUTTON_IN_TITLE_SCREEN;
-        public ForgeConfigSpec.ConfigValue<List<String>> METHOD_SHADER_BLACKLIST;
+        public ForgeConfigSpec.ConfigValue<List<? extends String>> METHOD_SHADER_BLACKLIST;
         public ForgeConfigSpec.ConfigValue<Boolean> METHOD_SHADER_DUMP;
 
         public Client() {
@@ -43,13 +44,15 @@ public class DarkConfig {
                     "OnlineServerEntry:drawIcon", "OnlineServerEntry:m_99889_" // Multiplayer Server icons
             ));
 
+            Predicate<Object> blacklistElementValidator = (Object element) -> true;
+
             String TRANSLATION_KEY_BASE = "config." + DarkModeEverywhere.MODID + ".";
             METHOD_SHADER_BLACKLIST = BUILDER.comment(
                     "A list of class:method strings (render methods) that the dark shader will not be applied to.",
                     "Each string consists of the class and the method (or any substring) to block the dark shader.",
                     "For example, 'renderHunger' is sufficient to block 'net.minecraftforge.client.gui.overlay.ForgeGui:renderFood' (either will work).")
                 .translation(TRANSLATION_KEY_BASE + "method_shader_blacklist")
-                .define("METHOD_SHADER_BLACKLIST", defaultBlacklist);
+                .defineList("METHOD_SHADER_BLACKLIST", defaultBlacklist, blacklistElementValidator);
             METHOD_SHADER_DUMP = BUILDER.comment(
                     "Enabling this config will (every 5 seconds) dump which methods were used to render GUIs that the dark shader was applied to",
                     "The dump will consist of a list of class:method strings, e.g. 'net.minecraftforge.client.gui.overlay.ForgeGui:renderFood'",
