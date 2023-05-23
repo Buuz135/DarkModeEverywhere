@@ -46,19 +46,18 @@ public class ClientProxy {
         REGISTERED_SHADERS = new HashMap<>();
         REGISTERED_SHADER_LOCATIONS = new ArrayList<>();
         SHADER_VALUES = new HashMap<>();
-        List<ResourceLocation> alreadyPendingShaders = new ArrayList<>();
         for (ShaderConfig.ShaderValue shaderValue : CONFIG.getShaders()) {
-            SHADER_VALUES.put(shaderValue.resourceLocation, shaderValue);
-            if (alreadyPendingShaders.contains(shaderValue.resourceLocation)) continue;
+            if (SHADER_VALUES.put(shaderValue.resourceLocation, shaderValue) != null) {
+                continue;
+            }
             try {
                 event.registerShader(new ShaderInstance(event.getResourceManager(), shaderValue.resourceLocation, DefaultVertexFormat.POSITION_TEX), shaderInstance -> {
-                    DarkModeEverywhere.LOGGER.debug("Registered shader " + shaderValue.resourceLocation);
+                    DarkModeEverywhere.LOGGER.debug("Registered shader {}", shaderValue.resourceLocation);
                     REGISTERED_SHADERS.put(shaderValue.resourceLocation, shaderInstance);
                     REGISTERED_SHADER_LOCATIONS.add(shaderValue.resourceLocation);
                 });
-                alreadyPendingShaders.add(shaderValue.resourceLocation);
             } catch (IOException e) {
-                DarkModeEverywhere.LOGGER.trace(e);
+                DarkModeEverywhere.LOGGER.trace("Failed to register shader", e);
             }
         }
         if (CONFIG.getSelectedShader() != null){
@@ -70,27 +69,24 @@ public class ClientProxy {
     @SubscribeEvent
     public void onConfigReload(ModConfigEvent.Reloading reloading){ BLACKLISTED_ELEMENTS.clear(); }
 
-    private static boolean considerElementNameForBlacklist(String elementName) {
-        DarkModeEverywhere.LOGGER.debug("Considering " + elementName + " for element blacklist");
-        boolean result = DarkConfig.CLIENT.METHOD_SHADER_BLACKLIST.get().stream().anyMatch(elementName::contains);
-        BLACKLISTED_ELEMENTS.put(elementName, result);
-        RenderedClassesTracker.add(elementName);
-        return result;
+    private static boolean blacklistContains(List<? extends String> blacklist, String elementName) {
+        return blacklist.stream().anyMatch(elementName::contains);
     }
 
     public static boolean isElementNameBlacklisted(String elementName) {
-        try {
-            return BLACKLISTED_ELEMENTS.get(elementName);
-        } catch (NullPointerException error) {
-            return considerElementNameForBlacklist(elementName);
-        }
+        return BLACKLISTED_ELEMENTS.computeIfAbsent(elementName, (String name) -> {
+            DarkModeEverywhere.LOGGER.debug("Considering {} for element blacklist", name);
+            RenderedClassesTracker.add(name);
+            return blacklistContains(MODDED_BLACKLIST, name) || blacklistContains(DarkConfig.CLIENT.METHOD_SHADER_BLACKLIST.get(), name);
+        });
     }
 
     @SubscribeEvent
     public void imcCallback(InterModProcessEvent event) {
         event.getIMCStream(string -> string.equals("dme-shaderblacklist")).forEach(imcMessage -> {
-            String classMethodBlacklist = (String) imcMessage.messageSupplier().get();
-            MODDED_BLACKLIST.add(classMethodBlacklist);
+            if (imcMessage.messageSupplier().get() instanceof String classMethodBlacklist) {
+                MODDED_BLACKLIST.add(classMethodBlacklist);
+            }
         });
     }
 
