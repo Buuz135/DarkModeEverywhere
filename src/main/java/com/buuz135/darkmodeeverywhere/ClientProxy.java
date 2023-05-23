@@ -2,6 +2,9 @@ package com.buuz135.darkmodeeverywhere;
 
 
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
+import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
+import java.util.Map;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
@@ -24,13 +27,13 @@ import java.util.HashMap;
 import java.util.List;
 
 public class ClientProxy {
-    public static HashMap<String, Boolean> BLACKLISTED_ELEMENTS = new HashMap<>();
+    public static Object2BooleanMap<String> BLACKLISTED_ELEMENTS = new Object2BooleanOpenHashMap<>();
     public static List<String> MODDED_BLACKLIST = new ArrayList<>();
 
     public static ShaderConfig CONFIG = new ShaderConfig();
-    public static HashMap<ResourceLocation, ShaderInstance> REGISTERED_SHADERS = new HashMap<>();
-    public static ArrayList<ResourceLocation> REGISTERED_SHADER_LOCATIONS = new ArrayList<>();
-    public static HashMap<ResourceLocation, ShaderConfig.ShaderValue> SHADER_VALUES = new HashMap<>();
+    public static Map<ResourceLocation, ShaderInstance> REGISTERED_SHADERS = new HashMap<>();
+    public static List<ResourceLocation> REGISTERED_SHADER_LOCATIONS = new ArrayList<>();
+    public static Map<ResourceLocation, ShaderConfig.ShaderValue> SHADER_VALUES = new HashMap<>();
     public static ResourceLocation SELECTED_SHADER = null;
 
     public ClientProxy() {
@@ -84,6 +87,7 @@ public class ClientProxy {
     @SubscribeEvent
     public void imcCallback(InterModProcessEvent event) {
         event.getIMCStream(string -> string.equals("dme-shaderblacklist")).forEach(imcMessage -> {
+            //Validate someone didn't send us something that isn't a string
             if (imcMessage.messageSupplier().get() instanceof String classMethodBlacklist) {
                 MODDED_BLACKLIST.add(classMethodBlacklist);
             }

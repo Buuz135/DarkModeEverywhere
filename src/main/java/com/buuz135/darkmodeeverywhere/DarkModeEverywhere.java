@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 @Mod("darkmodeeverywhere")
 public class DarkModeEverywhere {
 
-    // Directly reference a log4j logger.
     public static final Logger LOGGER = LogUtils.getLogger();
     public static final String MODID = "darkmodeeverywhere";
 

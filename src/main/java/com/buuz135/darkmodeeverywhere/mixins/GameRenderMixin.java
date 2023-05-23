@@ -40,7 +40,7 @@ public class GameRenderMixin {
             }
         }
     }
-
+  
     private static String walkForCallerClassName(Stream<StackFrame> stackFrameStream) {
         return stackFrameStream
             .filter(frame -> !(
