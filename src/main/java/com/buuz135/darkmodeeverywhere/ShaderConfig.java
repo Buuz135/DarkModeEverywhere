@@ -24,9 +24,9 @@ public class ShaderConfig {
     public ShaderConfig() {
         this.shaders = new ArrayList<>();
         this.version = 1;
-        this.shaders.add(new ShaderValue(new ResourceLocation("darkmodeeverywhere", "perfect_dark"), Component.translatable("gui.darkmodeeverywhere.perfect_dark"), 16777215));
-        this.shaders.add(new ShaderValue(new ResourceLocation("darkmodeeverywhere", "less_perfect_dark"), Component.translatable("gui.darkmodeeverywhere.less_perfect_dark"), 16777215));
-        this.shaders.add(new ShaderValue(new ResourceLocation("darkmodeeverywhere", "toasted_light"), Component.translatable("gui.darkmodeeverywhere.toasted_light"), 16777215));
+        this.shaders.add(new ShaderValue(new ResourceLocation("darkmodeeverywhere", "perfect_dark"), "gui.darkmodeeverywhere.perfect_dark", 16777215));
+        this.shaders.add(new ShaderValue(new ResourceLocation("darkmodeeverywhere", "less_perfect_dark"), "gui.darkmodeeverywhere.less_perfect_dark", 16777215));
+        this.shaders.add(new ShaderValue(new ResourceLocation("darkmodeeverywhere", "toasted_light"), "gui.darkmodeeverywhere.toasted_light", 16777215));
         this.selectedShader = null;
     }
 
@@ -49,7 +49,7 @@ public class ShaderConfig {
     }
 
     private static Gson createGson() {
-        return new GsonBuilder().setPrettyPrinting().registerTypeAdapter(Component.class, new Component.Serializer()).create();
+        return new GsonBuilder().setPrettyPrinting().create();
     }
 
     public static void load(){
@@ -76,10 +76,10 @@ public class ShaderConfig {
 
     public static class ShaderValue {
         public ResourceLocation resourceLocation;
-        public MutableComponent displayName;
+        public String displayName;
         public int darkColorReplacement;
 
-        public ShaderValue(ResourceLocation resourceLocation, MutableComponent displayName, int darkColorReplacement) {
+        public ShaderValue(ResourceLocation resourceLocation, String displayName, int darkColorReplacement) {
             this.resourceLocation = resourceLocation;
             this.displayName = displayName;
             this.darkColorReplacement = darkColorReplacement;

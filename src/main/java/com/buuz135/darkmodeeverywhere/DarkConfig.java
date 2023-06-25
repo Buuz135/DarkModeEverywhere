@@ -33,13 +33,15 @@ public class DarkConfig {
                 "mezz.jei.common.render.FluidTankRenderer:drawTextureWithMasking",//1.19.1 JEI Path
                 "mezz.jei.library.render.FluidTankRenderer:drawTextureWithMasking",//1.19.2+ JEI Path
                 "renderCrosshair", "m_93080_",
-                "net.minecraft.client.gui.screens.TitleScreen",
                 "renderSky", "m_202423_",
                 "renderHotbar", "m_93009_", "m_193837_",//Normal hotbar, and spectator hotbar
                 "setupOverlayRenderState",
                 "net.minecraftforge.client.gui.overlay.ForgeGui",
                 "renderFood",
-                "renderExperienceBar", "m_93071_"
+                "renderExperienceBar", "m_93071_",
+                "renderLogo", "m_280037_", "m_280118_",
+                "net.minecraft.client.gui.Gui", "net.minecraft.src.C_3431_",
+                "renderDirtBackground", "m_280039_", "m_280039_"
             ));
 
             String TRANSLATION_KEY_BASE = "config." + DarkModeEverywhere.MODID + ".";

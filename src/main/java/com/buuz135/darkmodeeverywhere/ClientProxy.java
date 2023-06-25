@@ -113,7 +113,7 @@ public class ClientProxy {
     }
 
     private Tooltip getShaderSwitchButtonTooltip() {
-        MutableComponent tooltipComponent = SELECTED_SHADER == null ? Component.translatable("gui." + DarkModeEverywhere.MODID + ".light_mode") : SHADER_VALUES.get(SELECTED_SHADER).displayName.copy();
+        MutableComponent tooltipComponent = SELECTED_SHADER == null ? Component.translatable("gui." + DarkModeEverywhere.MODID + ".light_mode") : Component.translatable(SHADER_VALUES.get(SELECTED_SHADER).displayName);
         tooltipComponent.append(Component.literal("\n"));
         tooltipComponent.append(Component.translatable("gui.tooltip." + DarkModeEverywhere.MODID + ".shader_switch_tooltip").withStyle(ChatFormatting.GRAY));
 
