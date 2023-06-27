@@ -24,14 +24,13 @@ public class GameRenderMixin {
     @Inject(method = "getPositionTexShader", at = @At("HEAD"), cancellable = true)
     private static void getPositionTexShader(CallbackInfoReturnable<ShaderInstance> cir) {
         if (ClientProxy.SELECTED_SHADER != null){
-            var element = ClassUtil.getCallerCallerClassName();
-            if (element == null) {
+            var callerClassName = ClassUtil.getCallerClassName();
+            if (callerClassName == null) {
                 replaceDefaultShaderWithSelectedShader(cir);
                 return;
             }
 
-            var elementName = element.getClassName() + ":" + element.getMethodName();
-            boolean elementNameIsBlacklisted = ClientProxy.isElementNameBlacklisted(elementName);
+            boolean elementNameIsBlacklisted = ClientProxy.isElementNameBlacklisted(callerClassName);
 
             if (!elementNameIsBlacklisted) {
                 replaceDefaultShaderWithSelectedShader(cir);
