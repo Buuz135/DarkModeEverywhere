@@ -52,16 +52,17 @@ public class ClientProxy {
         REGISTERED_SHADER_LOCATIONS = new ArrayList<>();
         SHADER_VALUES = new HashMap<>();
         for (ShaderConfig.ShaderValue shaderValue : CONFIG.getShaders()) {
-            if (SHADER_VALUES.put(shaderValue.resourceLocation, shaderValue) == null) {
-                try {
-                    event.registerShader(new ShaderInstance(event.getResourceProvider(), shaderValue.resourceLocation, DefaultVertexFormat.POSITION_TEX), shaderInstance -> {
-                        DarkModeEverywhere.LOGGER.debug("Registered shader {}", shaderValue.resourceLocation);
-                        REGISTERED_SHADERS.put(shaderValue.resourceLocation, shaderInstance);
-                        REGISTERED_SHADER_LOCATIONS.add(shaderValue.resourceLocation);
-                    });
-                } catch (IOException e) {
-                    DarkModeEverywhere.LOGGER.trace("Failed to register shader", e);
-                }
+            if (SHADER_VALUES.put(shaderValue.resourceLocation, shaderValue) != null) {
+                continue;
+            }
+            try {
+                event.registerShader(new ShaderInstance(event.getResourceProvider(), shaderValue.resourceLocation, DefaultVertexFormat.POSITION_TEX), shaderInstance -> {
+                    DarkModeEverywhere.LOGGER.debug("Registered shader {}", shaderValue.resourceLocation);
+                    REGISTERED_SHADERS.put(shaderValue.resourceLocation, shaderInstance);
+                    REGISTERED_SHADER_LOCATIONS.add(shaderValue.resourceLocation);
+                });
+            } catch (IOException e) {
+                DarkModeEverywhere.LOGGER.trace("Failed to register shader", e);
             }
         }
         if (CONFIG.getSelectedShader() != null){
@@ -73,7 +74,7 @@ public class ClientProxy {
     @SubscribeEvent
     public void onConfigReload(ModConfigEvent.Reloading reloading){ BLACKLISTED_ELEMENTS.clear(); }
 
-    private static boolean blacklistContains(List<String> blacklist, String elementName) {
+    private static boolean blacklistContains(List<? extends String> blacklist, String elementName) {
         return blacklist.stream().anyMatch(elementName::contains);
     }
 
