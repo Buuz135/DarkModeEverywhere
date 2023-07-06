@@ -36,7 +36,6 @@ public class ClientProxy {
     public static Map<ShaderConfig.ShaderValue, ShaderInstance> TEX_SHADERS = new HashMap<>();
     public static Map<ShaderConfig.ShaderValue, ShaderInstance> TEX_COLOR_SHADERS = new HashMap<>();
     private static HashMap<ResourceLocation, Promise<ShaderInstance>> ON_SHADERS_LOADED = new HashMap<>();
-    private static HashMap<ResourceLocation, ShaderInstance> LOADED_SHADER_LOCATIONS = new HashMap<>();
     public static List<ShaderConfig.ShaderValue> SHADER_VALUES = new ArrayList<>();
     public static ShaderConfig.ShaderValue SELECTED_SHADER_VALUE = null;
 
@@ -55,7 +54,6 @@ public class ClientProxy {
             ON_SHADERS_LOADED.put(shaderResourceLocation, eventExecutor.newPromise());
             event.registerShader(new DarkShaderInstance(event.getResourceProvider(), shaderResourceLocation, format), (ShaderInstance shaderInstance) -> {
                 DarkModeEverywhere.LOGGER.debug("Shader {} has loaded, resolving promise", shaderResourceLocation);
-                LOADED_SHADER_LOCATIONS.put(shaderResourceLocation, shaderInstance);
                 ON_SHADERS_LOADED.get(shaderResourceLocation).setSuccess(shaderInstance);
             });
         } catch (IOException e) {
@@ -64,12 +62,6 @@ public class ClientProxy {
     }
 
     public void listenForShaderLoaded(RegisterShadersEvent event, ResourceLocation shaderResourceLocation, VertexFormat format, Consumer<ShaderInstance> onLoaded) {
-        if (LOADED_SHADER_LOCATIONS.containsKey(shaderResourceLocation)) {
-            ShaderInstance shaderInstance = LOADED_SHADER_LOCATIONS.get(shaderResourceLocation);
-            onLoaded.accept(shaderInstance);
-            return;
-        }
-
         if (!(ON_SHADERS_LOADED.containsKey(shaderResourceLocation))) {
             registerShaderForLoading(event, shaderResourceLocation, format);
         }
@@ -83,7 +75,6 @@ public class ClientProxy {
     public void registerAllShaders(RegisterShadersEvent event){
         TEX_SHADERS = new HashMap<>();
         TEX_COLOR_SHADERS = new HashMap<>();
-        LOADED_SHADER_LOCATIONS = new HashMap<>();
         ON_SHADERS_LOADED = new HashMap<>();
         SHADER_VALUES = new ArrayList<>();
         for (ShaderConfig.ShaderValue shaderValue : CONFIG.getShaders()) {
