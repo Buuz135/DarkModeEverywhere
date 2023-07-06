@@ -41,6 +41,7 @@ public class DarkConfig {
                 "net.minecraftforge.client.gui.overlay.ForgeGui",
                 "renderFood",
                 "renderExperienceBar", "m_93071_",
+                "configured.client.screen.ListMenuScreen", // Configured background
                 "OnlineServerEntry:drawIcon", "OnlineServerEntry:m_99889_", // Multiplayer Server icons
                 "WorldSelectionList$WorldListEntry:render", "WorldSelectionList$WorldListEntry:m_6311_", // Single player world icons
                 "CubeMap:render", "CubeMap:m_108849_", //1.20+ title screen panorama
