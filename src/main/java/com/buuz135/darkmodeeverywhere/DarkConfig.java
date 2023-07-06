@@ -41,7 +41,12 @@ public class DarkConfig {
                 "renderExperienceBar", "m_93071_",
                 "renderLogo", "m_280037_", "m_280118_",
                 "net.minecraft.client.gui.Gui", "net.minecraft.src.C_3431_",
-                "renderDirtBackground", "m_280039_", "m_280039_"
+                "renderDirtBackground", "m_280039_", "m_280039_",
+                "OnlineServerEntry:drawIcon", "OnlineServerEntry:m_99889_", // Multiplayer Server icons
+                "WorldSelectionList$WorldListEntry:render", "WorldSelectionList$WorldListEntry:m_6311_", // Single player world icons
+                "CubeMap:render", "CubeMap:m_108849_", //1.20+ title screen panorama
+                "squeek.appleskin.client.HUDOverlayHandler", //AppleSkin overlay
+                "shadows.packmenu.ExtendedMenuScreen" //Custom PackMenu backgrounds
             ));
 
             String TRANSLATION_KEY_BASE = "config." + DarkModeEverywhere.MODID + ".";
