@@ -21,11 +21,11 @@ public class FontMixin {
 
     private int modifyColor(int color){
         if (color == 0) return color;
-        if (ClientProxy.SELECTED_SHADER != null && Minecraft.getInstance().screen != null) {
-            int thre = 65;
-            ShaderConfig.ShaderValue shaderValue = ClientProxy.SHADER_VALUES.get(ClientProxy.SELECTED_SHADER);
+        if (ClientProxy.SELECTED_SHADER_VALUE != null && Minecraft.getInstance().screen != null) {
+            int threshold = 65;
+            ShaderConfig.ShaderValue shaderValue = ClientProxy.SELECTED_SHADER_VALUE;
             if (shaderValue.darkColorReplacement == -1) return color;
-            if (FastColor.ARGB32.red(color) < thre && FastColor.ARGB32.green(color)  < thre && FastColor.ARGB32.blue(color)  < thre){
+            if (FastColor.ARGB32.red(color) < threshold && FastColor.ARGB32.green(color) < threshold && FastColor.ARGB32.blue(color) < threshold){
                 return shaderValue.darkColorReplacement;
             }
         }
