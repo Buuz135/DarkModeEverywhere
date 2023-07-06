@@ -42,6 +42,7 @@ public class DarkConfig {
                 "renderLogo", "m_280037_", "m_280118_",
                 "net.minecraft.client.gui.Gui", "net.minecraft.src.C_3431_",
                 "renderDirtBackground", "m_280039_", "m_280039_",
+                "configured.client.screen.ListMenuScreen", // Configured background
                 "OnlineServerEntry:drawIcon", "OnlineServerEntry:m_99889_", // Multiplayer Server icons
                 "WorldSelectionList$WorldListEntry:render", "WorldSelectionList$WorldListEntry:m_6311_", // Single player world icons
                 "CubeMap:render", "CubeMap:m_108849_", //1.20+ title screen panorama
