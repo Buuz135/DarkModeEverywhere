@@ -89,15 +89,11 @@ public class ClientProxy {
         for (ShaderConfig.ShaderValue shaderValue : CONFIG.getShaders()) {
             SHADER_VALUES.add(shaderValue);
             if (shaderValue == null) continue;
-            Promise<Void> texShaderLoaded = eventExecutor.newPromise();
             listenForShaderLoaded(event, shaderValue.texShaderLocation, DefaultVertexFormat.POSITION_TEX, (shaderInstance -> {
                 TEX_SHADERS.put(shaderValue, shaderInstance);
-                texShaderLoaded.setSuccess(null);
             }));
-            Promise<Void> texColorShaderLoaded = eventExecutor.newPromise();
             listenForShaderLoaded(event, shaderValue.texColorShaderLocation, DefaultVertexFormat.POSITION_TEX_COLOR, (shaderInstance -> {
                 TEX_COLOR_SHADERS.put(shaderValue, shaderInstance);
-                texColorShaderLoaded.setSuccess(null);
             }));
         }
         SELECTED_SHADER_VALUE = SHADER_VALUES.get(CONFIG.getSelectedShaderIndex());
