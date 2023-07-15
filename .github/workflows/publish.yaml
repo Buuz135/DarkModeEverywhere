@@ -36,4 +36,4 @@ jobs:
           loaders: forge
           version: ${{ github.ref_name }}
           name: ""
-          changelog: "https://github.com/Buuz135/DarkModeEverywhere/commits/1.19"
+          changelog: "https://github.com/Buuz135/DarkModeEverywhere/commits/1.19.4"
