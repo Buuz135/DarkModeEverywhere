@@ -8,7 +8,8 @@
   ],
   "client": [
     "FontMixin",
-    "GameRenderMixin"
+    "GameRenderMixin",
+    "VertexBufferMixin"
   ],
   "injectors": {
     "defaultRequire": 1
