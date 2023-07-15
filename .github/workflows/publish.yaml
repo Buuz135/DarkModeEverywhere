@@ -27,12 +27,13 @@ jobs:
         uses: Kir-Antipov/mc-publish@v2.1
         with:
           curseforge-id: 574123
+          modrinth-id: k3lrwGqk
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           files-primary: build/libs/!(*-@(dev|sources)).jar
           files-secondary: build/libs/*-@(dev|sources).jar
-          version-type: beta
+          version-type: release
           loaders: forge
-          game-versions: 1.19.4
-          java: 17
+          version: ${{ github.ref_name }}
           name: ""
           changelog: "https://github.com/Buuz135/DarkModeEverywhere/commits/1.19"
