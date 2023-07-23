@@ -41,7 +41,12 @@ public class DarkConfig {
                 "net.minecraftforge.client.gui.overlay.ForgeGui",
                 "renderFood",
                 "renderExperienceBar", "m_93071_",
-                "OnlineServerEntry:drawIcon", "OnlineServerEntry:m_99889_" // Multiplayer Server icons
+                "configured.client.screen.ListMenuScreen", // Configured background
+                "OnlineServerEntry:drawIcon", "OnlineServerEntry:m_99889_", // Multiplayer Server icons
+                "WorldSelectionList$WorldListEntry:render", "WorldSelectionList$WorldListEntry:m_6311_", // Single player world icons
+                "CubeMap:render", "CubeMap:m_108849_", //1.20+ title screen panorama
+                "squeek.appleskin.client.HUDOverlayHandler", //AppleSkin overlay
+                "shadows.packmenu.ExtendedMenuScreen" //Custom PackMenu backgrounds
             ));
 
             Predicate<Object> blacklistElementValidator = (Object element) -> true;
@@ -60,13 +65,14 @@ public class DarkConfig {
                 .translation(TRANSLATION_KEY_BASE + "method_shader_dump")
                 .define("METHOD_SHADER_DUMP", false);
 
-            BUILDER.push("Button Position");
+            BUILDER.push("Inventory Button");
             GUI_BUTTON_X_OFFSET = BUILDER.comment("Pixels away from the left of the GUI in the x axis")
                 .translation(TRANSLATION_KEY_BASE + "button_position_x")
                 .defineInRange("X", 32, 0, Integer.MAX_VALUE);
             GUI_BUTTON_Y_OFFSET = BUILDER.comment("Pixels away from the bottom of the GUI in the y axis")
                 .translation(TRANSLATION_KEY_BASE + "button_position_y")
                 .defineInRange("Y", 2, 0, Integer.MAX_VALUE);
+            BUILDER.pop();
 
             BUILDER.push("Main Menu Button");
             SHOW_BUTTON_IN_TITLE_SCREEN = BUILDER.comment("Enabled")
@@ -78,6 +84,7 @@ public class DarkConfig {
             TITLE_SCREEN_BUTTON_Y_OFFSET = BUILDER.comment("Pixels away from the bottom of the GUI in the y axis")
                 .translation(TRANSLATION_KEY_BASE + "button_position_y")
                 .defineInRange("MAIN_Y", 40, 0, Integer.MAX_VALUE);
+            BUILDER.pop();
 
             SPEC = BUILDER.build();
         }
