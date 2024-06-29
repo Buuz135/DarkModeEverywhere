@@ -24,15 +24,15 @@ jobs:
       - name: build
         run: ./gradlew build
       - name: Publish Minecraft Mods Forge
-        uses: Kir-Antipov/mc-publish@v2.1
+        uses: Kir-Antipov/mc-publish@v3.3.0
         with:
           curseforge-id: 574123
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
           files-primary: build/libs/!(*-@(dev|sources)).jar
           files-secondary: build/libs/*-@(dev|sources).jar
           version-type: beta
-          loaders: forge
-          game-versions: 1.20.1
-          java: 17
+          loaders: neoforge
+          game-versions: 1.21
+          java: 21
           name: ""
-          changelog: "https://github.com/Buuz135/DarkModeEverywhere/commits/1.20"
+          changelog: "https://github.com/Buuz135/DarkModeEverywhere/commits/1.21"

@@ -1,8 +1,9 @@
 package com.buuz135.darkmodeeverywhere;
 
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
+
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.event.config.ModConfigEvent;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,22 +14,22 @@ public class DarkConfig {
     public static Client CLIENT = new Client();
 
     private static abstract class ConfigClass {
-        public ForgeConfigSpec SPEC;
+        public ModConfigSpec SPEC;
 
         public abstract void onConfigReload(ModConfigEvent.Reloading event);
     }
 
     public static class Client extends ConfigClass {
-        public ForgeConfigSpec.ConfigValue<Integer> GUI_BUTTON_X_OFFSET;
-        public ForgeConfigSpec.ConfigValue<Integer> GUI_BUTTON_Y_OFFSET;
-        public ForgeConfigSpec.ConfigValue<Integer> TITLE_SCREEN_BUTTON_X_OFFSET;
-        public ForgeConfigSpec.ConfigValue<Integer> TITLE_SCREEN_BUTTON_Y_OFFSET;
-        public ForgeConfigSpec.ConfigValue<Boolean> SHOW_BUTTON_IN_TITLE_SCREEN;
-        public ForgeConfigSpec.ConfigValue<List<String>> METHOD_SHADER_BLACKLIST;
-        public ForgeConfigSpec.ConfigValue<Boolean> METHOD_SHADER_DUMP;
+        public ModConfigSpec.ConfigValue<Integer> GUI_BUTTON_X_OFFSET;
+        public ModConfigSpec.ConfigValue<Integer> GUI_BUTTON_Y_OFFSET;
+        public ModConfigSpec.ConfigValue<Integer> TITLE_SCREEN_BUTTON_X_OFFSET;
+        public ModConfigSpec.ConfigValue<Integer> TITLE_SCREEN_BUTTON_Y_OFFSET;
+        public ModConfigSpec.ConfigValue<Boolean> SHOW_BUTTON_IN_TITLE_SCREEN;
+        public ModConfigSpec.ConfigValue<List<String>> METHOD_SHADER_BLACKLIST;
+        public ModConfigSpec.ConfigValue<Boolean> METHOD_SHADER_DUMP;
 
         public Client() {
-            final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
+            final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
             List<String> defaultBlacklist = new ArrayList<>(Arrays.asList(
                 "mezz.jei.common.render.FluidTankRenderer:drawTextureWithMasking",//1.19.1 JEI Path
                 "mezz.jei.library.render.FluidTankRenderer:drawTextureWithMasking",//1.19.2+ JEI Path

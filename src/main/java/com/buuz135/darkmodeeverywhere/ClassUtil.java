@@ -1,16 +1,15 @@
 package com.buuz135.darkmodeeverywhere;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import cpw.mods.modlauncher.api.INameMappingService;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
+
 
 import java.util.stream.Stream;
 
 public class ClassUtil {
 
-    private static final String SET_SHADER_METHOD_NAME = ObfuscationReflectionHelper.remapName(INameMappingService.Domain.METHOD, "m_157427_");
+    private static final String SET_SHADER_METHOD_NAME = "setShader";
 
     /*
     public static StackTraceElement getCallerCallerClassName() {

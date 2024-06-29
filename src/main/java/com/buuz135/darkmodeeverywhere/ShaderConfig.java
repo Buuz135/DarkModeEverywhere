@@ -24,9 +24,9 @@ public class ShaderConfig {
     public ShaderConfig() {
         this.shaders = new ArrayList<>();
         this.version = 1;
-        this.shaders.add(new ShaderValue(new ResourceLocation("darkmodeeverywhere", "perfect_dark"), "gui.darkmodeeverywhere.perfect_dark", 16777215));
-        this.shaders.add(new ShaderValue(new ResourceLocation("darkmodeeverywhere", "less_perfect_dark"), "gui.darkmodeeverywhere.less_perfect_dark", 16777215));
-        this.shaders.add(new ShaderValue(new ResourceLocation("darkmodeeverywhere", "toasted_light"), "gui.darkmodeeverywhere.toasted_light", 16777215));
+        this.shaders.add(new ShaderValue(ResourceLocation.fromNamespaceAndPath("darkmodeeverywhere", "perfect_dark"), "gui.darkmodeeverywhere.perfect_dark", 16777215));
+        this.shaders.add(new ShaderValue(ResourceLocation.fromNamespaceAndPath("darkmodeeverywhere", "less_perfect_dark"), "gui.darkmodeeverywhere.less_perfect_dark", 16777215));
+        this.shaders.add(new ShaderValue(ResourceLocation.fromNamespaceAndPath("darkmodeeverywhere", "toasted_light"), "gui.darkmodeeverywhere.toasted_light", 16777215));
         this.selectedShader = null;
     }
 

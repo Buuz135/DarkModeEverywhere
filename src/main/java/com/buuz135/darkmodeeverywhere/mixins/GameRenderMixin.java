@@ -2,12 +2,8 @@ package com.buuz135.darkmodeeverywhere.mixins;
 
 import com.buuz135.darkmodeeverywhere.ClassUtil;
 import com.buuz135.darkmodeeverywhere.ClientProxy;
-import com.mojang.blaze3d.systems.RenderSystem;
-import cpw.mods.modlauncher.api.INameMappingService;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.ShaderInstance;
-import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
