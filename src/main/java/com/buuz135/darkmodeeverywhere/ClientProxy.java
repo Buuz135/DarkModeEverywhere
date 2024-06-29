@@ -16,13 +16,14 @@ import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.event.RegisterShadersEvent;
-import net.minecraftforge.client.event.ScreenEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
-import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.event.config.ModConfigEvent;
+import net.neoforged.fml.event.lifecycle.InterModProcessEvent;
+import net.neoforged.neoforge.client.event.RegisterShadersEvent;
+import net.neoforged.neoforge.client.event.ScreenEvent;
+import net.neoforged.neoforge.common.NeoForge;
 
 import java.io.IOException;
 import java.util.*;
@@ -39,13 +40,13 @@ public class ClientProxy {
     public static List<ShaderConfig.ShaderValue> SHADER_VALUES = new ArrayList<>();
     public static ShaderConfig.ShaderValue SELECTED_SHADER_VALUE = null;
 
-    public ClientProxy() {
-        eventExecutor = new DefaultEventExecutor();
+    public ClientProxy(IEventBus modEventBus, ModContainer modContainer) {
+        private final EventExecutor eventExecutor;
         ShaderConfig.load();
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::registerAllShaders);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onConfigReload);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::imcCallback);
-        MinecraftForge.EVENT_BUS.addListener(this::openGui);
+        modEventBus.addListener(this::registerAllShaders);
+        modEventBus.addListener(this::onConfigReload);
+        modEventBus.addListener(this::imcCallback);
+        NeoForge.EVENT_BUS.addListener(this::openGui);
     }
 
     private void registerShaderForLoading(RegisterShadersEvent event, ResourceLocation shaderResourceLocation, VertexFormat format) {
@@ -150,7 +151,7 @@ public class ClientProxy {
     }
 
     @SubscribeEvent
-    public void openGui(ScreenEvent.Init event){
+    public void openGui(ScreenEvent.Init.Pre event){
        if (event.getScreen() instanceof AbstractContainerScreen || (DarkConfig.CLIENT.SHOW_BUTTON_IN_TITLE_SCREEN.get() && event.getScreen() instanceof TitleScreen)){
            int x = DarkConfig.CLIENT.GUI_BUTTON_X_OFFSET.get();
            int y = DarkConfig.CLIENT.GUI_BUTTON_Y_OFFSET.get();

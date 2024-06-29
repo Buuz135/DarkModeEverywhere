@@ -24,8 +24,8 @@ public class ShaderConfig {
     public ShaderConfig() {
         this.shaders = new ArrayList<>();
         this.version = 2;
-        ResourceLocation tex_shader_location = new ResourceLocation("darkmodeeverywhere", "dark_position_tex");
-        ResourceLocation tex_color_shader_location = new ResourceLocation("darkmodeeverywhere", "dark_position_tex_color");
+        ResourceLocation tex_shader_location = ResourceLocation.fromNamespaceAndPath("darkmodeeverywhere", "dark_position_tex");
+        ResourceLocation tex_color_shader_location = ResourceLocation.fromNamespaceAndPath("darkmodeeverywhere", "dark_position_tex_color");
         this.shaders.add(null);
         this.shaders.add(new ShaderValue(tex_shader_location, tex_color_shader_location, Component.translatable("gui.darkmodeeverywhere.perfect_dark"), (float)5.5, 16777215));
         this.shaders.add(new ShaderValue(tex_shader_location, tex_color_shader_location, Component.translatable("gui.darkmodeeverywhere.less_perfect_dark"), (float)3.5, 16777215));
