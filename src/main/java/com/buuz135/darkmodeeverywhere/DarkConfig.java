@@ -14,9 +14,9 @@ public class DarkConfig {
     public static Client CLIENT = new Client();
 
     private static abstract class ConfigClass {
+
         public ModConfigSpec SPEC;
 
-        public abstract void onConfigReload(ModConfigEvent.Reloading event);
     }
 
     public static class Client extends ConfigClass {
@@ -83,11 +83,5 @@ public class DarkConfig {
             SPEC = BUILDER.build();
         }
 
-        @Override
-        public void onConfigReload(ModConfigEvent.Reloading event) {
-            if (event.getConfig().getType() == ModConfig.Type.COMMON) {
-                SPEC.setConfig(event.getConfig().getConfigData());
-            }
-        }
     }
 }

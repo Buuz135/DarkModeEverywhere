@@ -21,8 +21,8 @@ public class DarkModeEverywhere {
         if (FMLEnvironment.dist == Dist.CLIENT){
             new ClientProxy(modEventBus, modContainer);
         }
-        modContainer.registerConfig(ModConfig.Type.CLIENT, DarkConfig.CLIENT.SPEC);
-        modEventBus.addListener(DarkConfig.CLIENT::onConfigReload);
+        modContainer.registerConfig(ModConfig.Type.STARTUP, DarkConfig.CLIENT.SPEC);
+        //modEventBus.addListener(DarkConfig.CLIENT::onConfigReload);
     }
 
 }
