@@ -139,7 +139,7 @@ public class ClientProxy {
                    button.setTooltip(getShaderSwitchButtonTooltip());
                });
 
-           buttonBuilder.pos(x, event.getScreen().height - 24 - y);
+           buttonBuilder.pos(x, event.getScreen().height - 19 - y);
            buttonBuilder.size(60, 20);
 
            buttonBuilder.tooltip(getShaderSwitchButtonTooltip());
