@@ -152,7 +152,7 @@ public class ClientProxy {
 
     @SubscribeEvent
     public void openGui(ScreenEvent.Init.Pre event){
-       if (event.getScreen() instanceof AbstractContainerScreen || (DarkConfig.CLIENT.SHOW_BUTTON_IN_TITLE_SCREEN.get() && event.getScreen() instanceof TitleScreen)){
+       if (event.getScreen() instanceof AbstractContainerScreen || (event.getScreen() instanceof TitleScreen && DarkConfig.CLIENT.SHOW_BUTTON_IN_TITLE_SCREEN.get())){
            int x = DarkConfig.CLIENT.GUI_BUTTON_X_OFFSET.get();
            int y = DarkConfig.CLIENT.GUI_BUTTON_Y_OFFSET.get();
            if (event.getScreen() instanceof TitleScreen){
