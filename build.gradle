@@ -155,10 +155,10 @@ dependencies {
     minecraft 'net.minecraftforge:forge:1.20.1-47.0.19'
 
     // compile against the JEI API but do not include it at runtime
-    compileOnly fg.deobf("mezz.jei:jei-1.20.1-common-api:15.1.0.19")
-    compileOnly fg.deobf("mezz.jei:jei-1.20.1-forge-api:15.1.0.19")
+    //compileOnly fg.deobf("mezz.jei:jei-1.20.1-common-api:15.1.0.19")
+    //compileOnly fg.deobf("mezz.jei:jei-1.20.1-forge-api:15.1.0.19")
     // at runtime, use the full JEI jar for Forge
-    runtimeOnly fg.deobf("mezz.jei:jei-1.20.1-forge:15.1.0.19")
+    //runtimeOnly fg.deobf("mezz.jei:jei-1.20.1-forge:15.1.0.19")
 
     // Real mod deobf dependency examples - these get remapped to your current mappings
     // compileOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}:api") // Adds JEI API as a compile dependency
