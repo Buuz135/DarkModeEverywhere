@@ -2,33 +2,33 @@ package com.buuz135.darkmodeeverywhere.mixins;
 
 import com.buuz135.darkmodeeverywhere.ClientProxy;
 import com.buuz135.darkmodeeverywhere.ShaderConfig;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.util.FastColor;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
-
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 
 @Mixin(Font.class)
 public class FontMixin {
 
-    @ModifyArg(method = "drawInternal(Lnet/minecraft/util/FormattedCharSequence;FFIZLorg/joml/Matrix4f;Lnet/minecraft/client/renderer/MultiBufferSource;Lnet/minecraft/client/gui/Font$DisplayMode;II)I", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Font;adjustColor(I)I"), index = 0)
-    public int drawInternalA(int color) {
-        return modifyColor(color);
-    }
-
-    private int modifyColor(int color){
-        if (color == 0) return color;
+    @Inject(method = "adjustColor", at = @At(value = "HEAD", target = "Lnet/minecraft/client/gui/Font;adjustColor(I)I"), cancellable = true)
+    private static void adjustColorA(int color, CallbackInfoReturnable<Integer> cir) {
         if (ClientProxy.SELECTED_SHADER_VALUE != null && Minecraft.getInstance().screen != null) {
             int threshold = 65;
             ShaderConfig.ShaderValue shaderValue = ClientProxy.SELECTED_SHADER_VALUE;
-            if (shaderValue.darkColorReplacement == -1) return color;
-            if (FastColor.ARGB32.red(color) < threshold && FastColor.ARGB32.green(color) < threshold && FastColor.ARGB32.blue(color) < threshold){
-                return shaderValue.darkColorReplacement;
+            if (shaderValue.darkColorReplacement == -1) return;
+            if (ChatFormatting.GRAY.getColor().equals(color) || ChatFormatting.DARK_GRAY.getColor().equals(color)) {
+                cir.setReturnValue(0xFF000000 | shaderValue.darkColorReplacement);
+                return;
+            }
+            if (FastColor.ARGB32.red(color) < threshold && FastColor.ARGB32.green(color)  < threshold && FastColor.ARGB32.blue(color)  < threshold){
+                cir.setReturnValue(0xFF000000 | shaderValue.darkColorReplacement);
+                return;
             }
         }
-        return color;
     }
 }
