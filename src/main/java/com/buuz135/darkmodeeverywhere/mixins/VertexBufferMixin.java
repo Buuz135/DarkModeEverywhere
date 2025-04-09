@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(VertexBuffer.class)
 public class VertexBufferMixin {
 
-    @Inject(method="_drawWithShader", at=@At(value="INVOKE", target="Lcom/mojang/blaze3d/systems/RenderSystem;setupShaderLights(Lnet/minecraft/client/renderer/ShaderInstance;)V"))
+    @Inject(method="_drawWithShader", at=@At(value="HEAD"))
     private void _drawWithShader(Matrix4f p_253705_, Matrix4f p_253737_, ShaderInstance p_166879_, CallbackInfo ci) {
         if (!(p_166879_ instanceof DarkShaderInstance darkShaderInstance)) return;
 
