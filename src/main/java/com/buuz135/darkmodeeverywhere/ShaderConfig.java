@@ -2,6 +2,7 @@ package com.buuz135.darkmodeeverywhere;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
@@ -50,7 +51,7 @@ public class ShaderConfig {
     private static Gson createGson() {
         return new GsonBuilder()
                 .setPrettyPrinting()
-                .registerTypeAdapter(MutableComponent.class, new Component.Serializer())
+                .registerTypeAdapter(MutableComponent.class, new Component.SerializerAdapter(RegistryAccess.EMPTY))
                 .create();
     }
 
