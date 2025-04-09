@@ -41,7 +41,7 @@ public class ClientProxy {
     public static ShaderConfig.ShaderValue SELECTED_SHADER_VALUE = null;
 
     public ClientProxy(IEventBus modEventBus, ModContainer modContainer) {
-        private final EventExecutor eventExecutor;
+        eventExecutor = new DefaultEventExecutor();
         ShaderConfig.load();
         modEventBus.addListener(this::registerAllShaders);
         modEventBus.addListener(this::onConfigReload);
