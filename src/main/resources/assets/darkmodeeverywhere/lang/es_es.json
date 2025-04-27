@@ -1,0 +1,13 @@
+{
+  "gui.darkmodeeverywhere.dark_mode": "Modo oscuro",
+  "gui.darkmodeeverywhere.light_mode": "Modo claro",
+  "gui.darkmodeeverywhere.perfect_dark": "Modo negro",
+  "gui.darkmodeeverywhere.less_perfect_dark": "Modo muy oscuro",
+  "gui.darkmodeeverywhere.toasted_light": "Modo ligeramente oscuro",
+  "gui.tooltip.darkmodeeverywhere.shader_switch_tooltip": " * Usa shift para ir al modo claro",
+  "config.darkemodeeverywhere.method_shader_blacklist": "Una lista de 'class:method strings' (render methods) en los que él 'dark shader' no se aplicará.\\nCada 'string' consta de una 'class' y el 'method' (or any substring) para bloquear el 'dark shader'.\\nPor ejemplo, 'renderHunger' es suficiente para bloquear 'net.minecraftforge.client.gui.overlay.ForgeGui:renderFood' (cualquiera funcionará)",
+  "config.darkemodeeverywhere.method_shader_dump": "Habilitar esta configuración volcará (cada 5 segundos) qué 'methods' se usaron para renderizar GUIs en las que se aplicaron el 'dark shader'.\\nEl volcado constará de una lista de 'class:method strings', e.g. 'net.minecraftforge.client.gui.overlay.ForgeGui:renderFood'\\nAyudate de esta función para encontrar los 'render methods strings' en los que quieras bloquear el 'dark shader'.",
+  "config.darkemodeeverywhere.button_position_x": "Margen de pixeles a la parte izquierda de la GUI en el eje X",
+  "config.darkemodeeverywhere.button_position_y": "Margen de pixeles a la parte inferior de la GUI en el eje Y",
+  "config.darkmodeeverywhere.enabled": "Activado"
+}
