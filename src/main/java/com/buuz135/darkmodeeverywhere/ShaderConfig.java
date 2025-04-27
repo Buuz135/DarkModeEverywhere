@@ -2,6 +2,7 @@ package com.buuz135.darkmodeeverywhere;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
@@ -18,38 +19,40 @@ public class ShaderConfig {
 
     private List<ShaderValue> shaders;
     private int version;
-    private String selectedShader;
+    private int selectedShaderIndex;
     private static final File configFilePath = new File("config" + File.separator + "darkmodeeverywhereshaders.json");
 
     public ShaderConfig() {
         this.shaders = new ArrayList<>();
-        this.version = 1;
-        this.shaders.add(new ShaderValue(ResourceLocation.fromNamespaceAndPath("darkmodeeverywhere", "perfect_dark"), "gui.darkmodeeverywhere.perfect_dark", 16777215));
-        this.shaders.add(new ShaderValue(ResourceLocation.fromNamespaceAndPath("darkmodeeverywhere", "less_perfect_dark"), "gui.darkmodeeverywhere.less_perfect_dark", 16777215));
-        this.shaders.add(new ShaderValue(ResourceLocation.fromNamespaceAndPath("darkmodeeverywhere", "toasted_light"), "gui.darkmodeeverywhere.toasted_light", 16777215));
-        this.selectedShader = null;
+        this.version = 2;
+        ResourceLocation tex_shader_location = ResourceLocation.fromNamespaceAndPath("darkmodeeverywhere", "dark_position_tex");
+        ResourceLocation tex_color_shader_location = ResourceLocation.fromNamespaceAndPath("darkmodeeverywhere", "dark_position_tex_color");
+        this.shaders.add(null);
+        this.shaders.add(new ShaderValue(tex_shader_location, tex_color_shader_location, Component.translatable("gui.darkmodeeverywhere.perfect_dark"), (float)5.5, 16777215));
+        this.shaders.add(new ShaderValue(tex_shader_location, tex_color_shader_location, Component.translatable("gui.darkmodeeverywhere.less_perfect_dark"), (float)3.5, 16777215));
+        this.shaders.add(new ShaderValue(tex_shader_location, tex_color_shader_location, Component.translatable("gui.darkmodeeverywhere.toasted_light"), (float)2, 16777215));
+        this.selectedShaderIndex = 0;
     }
-
+ 
     public List<ShaderValue> getShaders() {
         return shaders;
     }
 
-    public void setSelectedShader(ResourceLocation resourceLocation){
-        if (resourceLocation == null){
-            selectedShader = null;
-        } else {
-            selectedShader = resourceLocation.toString();
-        }
-        DarkModeEverywhere.LOGGER.debug("Selected shader updated to {}", selectedShader);
+    public void setSelectedShaderIndex(int index) {
+        selectedShaderIndex = index;
+        DarkModeEverywhere.LOGGER.debug("Selected shader index updated to {}", selectedShaderIndex);
         new Thread(ShaderConfig::createDefaultConfigFile).start();
     }
 
-    public String getSelectedShader() {
-        return selectedShader;
+    public int getSelectedShaderIndex() {
+        return selectedShaderIndex;
     }
 
     private static Gson createGson() {
-        return new GsonBuilder().setPrettyPrinting().create();
+        return new GsonBuilder()
+                .setPrettyPrinting()
+                .registerTypeAdapter(MutableComponent.class, new Component.SerializerAdapter(RegistryAccess.EMPTY))
+                .create();
     }
 
     public static void load(){
@@ -59,8 +62,12 @@ public class ShaderConfig {
         Gson gson = createGson();
         try (FileReader reader = new FileReader(configFilePath)) {
             ClientProxy.CONFIG = gson.fromJson(reader, ShaderConfig.class);
+            if (ClientProxy.CONFIG.version != new ShaderConfig().version) {
+                throw new Exception("Invalid config version.");
+            }
         } catch (Exception e) {
             e.printStackTrace();
+            ClientProxy.CONFIG = new ShaderConfig();
             createDefaultConfigFile();
         }
     }
@@ -75,13 +82,17 @@ public class ShaderConfig {
     }
 
     public static class ShaderValue {
-        public ResourceLocation resourceLocation;
-        public String displayName;
+        public ResourceLocation texShaderLocation;
+        public ResourceLocation texColorShaderLocation;
+        public MutableComponent displayName;
+        public float divideFactor;
         public int darkColorReplacement;
 
-        public ShaderValue(ResourceLocation resourceLocation, String displayName, int darkColorReplacement) {
-            this.resourceLocation = resourceLocation;
+        public ShaderValue(ResourceLocation texShaderLocation, ResourceLocation texColorShaderLocation, MutableComponent displayName, float divideFactor, int darkColorReplacement) {
+            this.texShaderLocation = texShaderLocation;
+            this.texColorShaderLocation = texColorShaderLocation;
             this.displayName = displayName;
+            this.divideFactor = divideFactor;
             this.darkColorReplacement = darkColorReplacement;
         }
     }
