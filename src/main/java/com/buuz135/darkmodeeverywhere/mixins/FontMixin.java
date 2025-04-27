@@ -1,5 +1,6 @@
 package com.buuz135.darkmodeeverywhere.mixins;
 
+import com.buuz135.darkmodeeverywhere.ClassUtil;
 import com.buuz135.darkmodeeverywhere.ClientProxy;
 import com.buuz135.darkmodeeverywhere.ShaderConfig;
 import net.minecraft.ChatFormatting;
@@ -16,8 +17,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class FontMixin {
 
     @Inject(method = "adjustColor", at = @At(value = "HEAD", target = "Lnet/minecraft/client/gui/Font;adjustColor(I)I"), cancellable = true)
-    private static void adjustColorA(int color, CallbackInfoReturnable<Integer> cir) {
+    private static void darkModeEverywhere$adjustColorA(int color, CallbackInfoReturnable<Integer> cir) {
         if (ClientProxy.SELECTED_SHADER_VALUE != null && Minecraft.getInstance().screen != null) {
+            var callerClassName = ClassUtil.getCallerClassName();
+            if (callerClassName != null && ClientProxy.isElementNameBlacklisted(callerClassName)) {
+                return;
+            }
             int threshold = 65;
             ShaderConfig.ShaderValue shaderValue = ClientProxy.SELECTED_SHADER_VALUE;
             if (shaderValue.darkColorReplacement == -1) return;
