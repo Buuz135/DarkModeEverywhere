@@ -47,6 +47,7 @@ public class DarkConfig {
                     "WorldSelectionList$WorldListEntry:render", "WorldSelectionList$WorldListEntry:m_6311_", // Single player world icons
                     "CubeMap:render", "CubeMap:m_108849_", //1.20+ title screen panorama
                     "squeek.appleskin.client.HUDOverlayHandler", //AppleSkin overlay
+                    "dzwdz.chat_heads.ChatHeads:renderChatHead", //Chat Heads
                     "shadows.packmenu.ExtendedMenuScreen" //Custom PackMenu backgrounds
             ));
 
