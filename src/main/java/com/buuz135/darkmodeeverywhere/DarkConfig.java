@@ -20,6 +20,7 @@ public class DarkConfig {
     public static class Client extends ConfigClass {
         public ModConfigSpec.ConfigValue<Integer> GUI_BUTTON_X_OFFSET;
         public ModConfigSpec.ConfigValue<Integer> GUI_BUTTON_Y_OFFSET;
+        public ModConfigSpec.ConfigValue<Boolean> SHOW_BUTTON_IN_INVENTORY;
         public ModConfigSpec.ConfigValue<Integer> TITLE_SCREEN_BUTTON_X_OFFSET;
         public ModConfigSpec.ConfigValue<Integer> TITLE_SCREEN_BUTTON_Y_OFFSET;
         public ModConfigSpec.ConfigValue<Boolean> SHOW_BUTTON_IN_TITLE_SCREEN;
@@ -70,6 +71,9 @@ public class DarkConfig {
             GUI_BUTTON_Y_OFFSET = BUILDER.comment("Pixels away from the bottom of the GUI in the y axis")
                 .translation(TRANSLATION_KEY_BASE + "button_position_y")
                 .defineInRange("Y", 2, 0, Integer.MAX_VALUE);
+            SHOW_BUTTON_IN_INVENTORY = BUILDER.comment("Enabled")
+                    .translation(TRANSLATION_KEY_BASE + "enabled")
+                    .define("SHOW", true);
             BUILDER.pop();
 
             BUILDER.push("Main Menu Button");
