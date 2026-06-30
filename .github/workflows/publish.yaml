@@ -27,7 +27,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build
-        run: ./gradlew clean build --no-daemon --console=plain
+        run: ./gradlew build
 
       - name: Publish Minecraft Mods Fabric
         uses: Kir-Antipov/mc-publish@v3.3.0
@@ -36,8 +36,9 @@ jobs:
           modrinth-id: k3lrwGqk
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
-          files-primary: fabric/build/libs/!(*-@(sources|javadoc)).jar
-          files-secondary: fabric/build/libs/*-@(sources|javadoc).jar
+          files: |
+            fabric/build/libs/!(*-@(javadoc|sources)).jar
+            fabric/build/libs/*-@(javadoc|sources).jar
           version-type: beta
           loaders: fabric
           game-versions: 1.21.1
@@ -52,8 +53,9 @@ jobs:
           modrinth-id: k3lrwGqk
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
-          files-primary: neoforge/build/libs/!(*-@(sources|javadoc)).jar
-          files-secondary: neoforge/build/libs/*-@(sources|javadoc).jar
+          files: |
+            neoforge/build/libs/!(*-@(javadoc|sources)).jar
+            neoforge/build/libs/*-@(javadoc|sources).jar
           version-type: beta
           loaders: neoforge
           game-versions: 1.21.1
