@@ -14,7 +14,7 @@ public class DarkShaderInstance extends ShaderInstance {
     public final Uniform PerceptionScale;
 
     public DarkShaderInstance(ResourceProvider p_173336_, ResourceLocation shaderLocation, VertexFormat p_173338_) throws IOException {
-        super(p_173336_, shaderLocation, p_173338_);
+        super(p_173336_, shaderLocation.toString(), p_173338_);
         this.DivideFactor = this.getUniform("DivideFactor");
         this.PerceptionScale = this.getUniform("PerceptionScale");
     }

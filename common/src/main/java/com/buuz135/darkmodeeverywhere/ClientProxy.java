@@ -1,9 +1,12 @@
 package com.buuz135.darkmodeeverywhere;
 
-
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import io.netty.util.concurrent.*;
+import io.netty.util.concurrent.DefaultEventExecutor;
+import io.netty.util.concurrent.EventExecutor;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.FutureListener;
+import io.netty.util.concurrent.Promise;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import net.minecraft.ChatFormatting;
@@ -16,17 +19,12 @@ import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.event.config.ModConfigEvent;
-import net.neoforged.fml.event.lifecycle.InterModProcessEvent;
-import net.neoforged.neoforge.client.event.RegisterShadersEvent;
-import net.neoforged.neoforge.client.event.ScreenEvent;
-import net.neoforged.neoforge.common.NeoForge;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 public class ClientProxy {
@@ -40,20 +38,16 @@ public class ClientProxy {
     public static List<ShaderConfig.ShaderValue> SHADER_VALUES = new ArrayList<>();
     public static ShaderConfig.ShaderValue SELECTED_SHADER_VALUE = null;
 
-    public ClientProxy(IEventBus modEventBus, ModContainer modContainer) {
+    public ClientProxy() {
         eventExecutor = new DefaultEventExecutor();
-        ShaderConfig.load();
-        modEventBus.addListener(this::registerAllShaders);
-        modEventBus.addListener(this::onConfigReload);
-        modEventBus.addListener(this::imcCallback);
-        NeoForge.EVENT_BUS.addListener(this::openGui);
+        DarkModeEverywhere.init();
     }
 
-    private void registerShaderForLoading(RegisterShadersEvent event, ResourceLocation shaderResourceLocation, VertexFormat format) {
+    private void registerShaderForLoading(ShaderLoader shaderLoader, ResourceLocation shaderResourceLocation, VertexFormat format) {
         try {
             DarkModeEverywhere.LOGGER.debug("Registering shader {} for loading", shaderResourceLocation);
             ON_SHADERS_LOADED.put(shaderResourceLocation, eventExecutor.newPromise());
-            event.registerShader(new DarkShaderInstance(event.getResourceProvider(), shaderResourceLocation, format), (ShaderInstance shaderInstance) -> {
+            shaderLoader.register(shaderResourceLocation, format, shaderInstance -> {
                 DarkModeEverywhere.LOGGER.debug("Shader {} has loaded, resolving promise", shaderResourceLocation);
                 ON_SHADERS_LOADED.get(shaderResourceLocation).setSuccess(shaderInstance);
             });
@@ -62,9 +56,9 @@ public class ClientProxy {
         }
     }
 
-    public void listenForShaderLoaded(RegisterShadersEvent event, ResourceLocation shaderResourceLocation, VertexFormat format, Consumer<ShaderInstance> onLoaded) {
+    public void listenForShaderLoaded(ShaderLoader shaderLoader, ResourceLocation shaderResourceLocation, VertexFormat format, Consumer<ShaderInstance> onLoaded) {
         if (!(ON_SHADERS_LOADED.containsKey(shaderResourceLocation))) {
-            registerShaderForLoading(event, shaderResourceLocation, format);
+            registerShaderForLoading(shaderLoader, shaderResourceLocation, format);
         }
 
         Promise<ShaderInstance> onLoadedPromise = ON_SHADERS_LOADED.get(shaderResourceLocation);
@@ -72,8 +66,7 @@ public class ClientProxy {
         onLoadedPromise.addListener(listener);
     }
 
-    @SubscribeEvent
-    public void registerAllShaders(RegisterShadersEvent event){
+    public void registerAllShaders(ShaderLoader shaderLoader){
         TEX_SHADERS = new HashMap<>();
         TEX_COLOR_SHADERS = new HashMap<>();
         ON_SHADERS_LOADED = new HashMap<>();
@@ -81,12 +74,8 @@ public class ClientProxy {
         for (ShaderConfig.ShaderValue shaderValue : CONFIG.getShaders()) {
             SHADER_VALUES.add(shaderValue);
             if (shaderValue == null) continue;
-            listenForShaderLoaded(event, shaderValue.texShaderLocation, DefaultVertexFormat.POSITION_TEX, (shaderInstance -> {
-                TEX_SHADERS.put(shaderValue, shaderInstance);
-            }));
-            listenForShaderLoaded(event, shaderValue.texColorShaderLocation, DefaultVertexFormat.POSITION_TEX_COLOR, (shaderInstance -> {
-                TEX_COLOR_SHADERS.put(shaderValue, shaderInstance);
-            }));
+            listenForShaderLoaded(shaderLoader, shaderValue.texShaderLocation, DefaultVertexFormat.POSITION_TEX, shaderInstance -> TEX_SHADERS.put(shaderValue, shaderInstance));
+            listenForShaderLoaded(shaderLoader, shaderValue.texColorShaderLocation, DefaultVertexFormat.POSITION_TEX_COLOR, shaderInstance -> TEX_COLOR_SHADERS.put(shaderValue, shaderInstance));
         }
         SELECTED_SHADER_VALUE = SHADER_VALUES.get(CONFIG.getSelectedShaderIndex());
         RenderedClassesTracker.start();
@@ -104,8 +93,9 @@ public class ClientProxy {
         return SELECTED_SHADER_VALUE;
     }
 
-    @SubscribeEvent
-    public void onConfigReload(ModConfigEvent.Reloading reloading){ BLACKLISTED_ELEMENTS.clear(); }
+    public void onConfigReload() {
+        BLACKLISTED_ELEMENTS.clear();
+    }
 
     private static boolean blacklistContains(List<? extends String> blacklist, String elementName) {
         return blacklist.stream().anyMatch(elementName::contains);
@@ -119,14 +109,8 @@ public class ClientProxy {
         });
     }
 
-    @SubscribeEvent
-    public void imcCallback(InterModProcessEvent event) {
-        event.getIMCStream(string -> string.equals("dme-shaderblacklist")).forEach(imcMessage -> {
-            //Validate someone didn't send us something that isn't a string
-            if (imcMessage.messageSupplier().get() instanceof String classMethodBlacklist) {
-                MODDED_BLACKLIST.add(classMethodBlacklist);
-            }
-        });
+    public void addShaderBlacklist(String classMethodBlacklist) {
+        MODDED_BLACKLIST.add(classMethodBlacklist);
     }
 
     private int getNextShaderValueIndex() {
@@ -150,12 +134,11 @@ public class ClientProxy {
         return Tooltip.create(tooltipComponent);
     }
 
-    @SubscribeEvent
-    public void openGui(ScreenEvent.Init.Pre event){
-       if ((event.getScreen() instanceof AbstractContainerScreen && DarkConfig.CLIENT.SHOW_BUTTON_IN_INVENTORY.get()) || (event.getScreen() instanceof TitleScreen && DarkConfig.CLIENT.SHOW_BUTTON_IN_TITLE_SCREEN.get())){
+    public void openGui(Screen screen, Consumer<Button> addButton){
+       if ((screen instanceof AbstractContainerScreen && DarkConfig.CLIENT.SHOW_BUTTON_IN_INVENTORY.get()) || (screen instanceof TitleScreen && DarkConfig.CLIENT.SHOW_BUTTON_IN_TITLE_SCREEN.get())){
            int x = DarkConfig.CLIENT.GUI_BUTTON_X_OFFSET.get();
            int y = DarkConfig.CLIENT.GUI_BUTTON_Y_OFFSET.get();
-           if (event.getScreen() instanceof TitleScreen){
+           if (screen instanceof TitleScreen){
                x = DarkConfig.CLIENT.TITLE_SCREEN_BUTTON_X_OFFSET.get();
                y = DarkConfig.CLIENT.TITLE_SCREEN_BUTTON_Y_OFFSET.get();
            }
@@ -169,12 +152,16 @@ public class ClientProxy {
                    button.setTooltip(getShaderSwitchButtonTooltip());
                });
 
-           buttonBuilder.pos(x, event.getScreen().height - 19 - y);
+           buttonBuilder.pos(x, screen.height - 19 - y);
            buttonBuilder.size(60, 20);
 
            buttonBuilder.tooltip(getShaderSwitchButtonTooltip());
-           Button button = buttonBuilder.build();
-           event.addListener(button);
+           addButton.accept(buttonBuilder.build());
        }
+    }
+
+    @FunctionalInterface
+    public interface ShaderLoader {
+        void register(ResourceLocation shaderResourceLocation, VertexFormat format, Consumer<ShaderInstance> onLoaded) throws IOException;
     }
 }

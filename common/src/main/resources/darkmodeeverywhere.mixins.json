@@ -2,7 +2,7 @@
   "required": true,
   "minVersion": "0.8",
   "package": "com.buuz135.darkmodeeverywhere.mixins",
-  "compatibilityLevel": "JAVA_8",
+  "compatibilityLevel": "JAVA_21",
   "refmap": "darkmodeeverywhere.refmap.json",
   "mixins": [
   ],

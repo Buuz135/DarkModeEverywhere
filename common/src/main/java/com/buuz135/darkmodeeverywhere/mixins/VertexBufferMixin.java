@@ -1,7 +1,7 @@
 package com.buuz135.darkmodeeverywhere.mixins;
 
 import com.buuz135.darkmodeeverywhere.ClientProxy;
-import com.buuz135.darkmodeeverywhere.DarkShaderInstance;
+import com.mojang.blaze3d.shaders.Uniform;
 import com.mojang.blaze3d.vertex.VertexBuffer;
 import net.minecraft.client.renderer.ShaderInstance;
 import org.joml.Matrix4f;
@@ -15,10 +15,12 @@ public class VertexBufferMixin {
 
     @Inject(method="_drawWithShader", at=@At(value="HEAD"))
     private void _drawWithShader(Matrix4f p_253705_, Matrix4f p_253737_, ShaderInstance p_166879_, CallbackInfo ci) {
-        if (!(p_166879_ instanceof DarkShaderInstance darkShaderInstance)) return;
+        if (ClientProxy.getSelectedShaderValue() == null) return;
+        if (p_166879_ != ClientProxy.getSelectedTexShader() && p_166879_ != ClientProxy.getSelectedTexColorShader()) return;
 
-        if (darkShaderInstance.DivideFactor == null) return;
+        Uniform divideFactor = p_166879_.getUniform("DivideFactor");
+        if (divideFactor == null) return;
 
-        darkShaderInstance.DivideFactor.set(ClientProxy.getSelectedShaderValue().divideFactor);
+        divideFactor.set(ClientProxy.getSelectedShaderValue().divideFactor);
     }
 }
