@@ -3,6 +3,7 @@ package com.buuz135.darkmodeeverywhere;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 public class NeoForgeDarkConfig {
 
@@ -51,18 +52,28 @@ public class NeoForgeDarkConfig {
 
         spec = builder.build();
         DarkConfig.install(new DarkConfig.Client(
-                guiButtonXOffset::get,
-                guiButtonYOffset::get,
-                showButtonInInventory::get,
-                titleScreenButtonXOffset::get,
-                titleScreenButtonYOffset::get,
-                showButtonInTitleScreen::get,
-                methodShaderBlacklist::get,
-                methodShaderDump::get
+                loadedOrDefault(guiButtonXOffset::get, 32),
+                loadedOrDefault(guiButtonYOffset::get, 2),
+                loadedOrDefault(showButtonInInventory::get, true),
+                loadedOrDefault(titleScreenButtonXOffset::get, 4),
+                loadedOrDefault(titleScreenButtonYOffset::get, 40),
+                loadedOrDefault(showButtonInTitleScreen::get, true),
+                loadedOrDefault(methodShaderBlacklist::get, DarkConfig.defaultBlacklist()),
+                loadedOrDefault(methodShaderDump::get, false)
         ));
     }
 
     public ModConfigSpec getSpec() {
         return spec;
+    }
+
+    private static <T> DarkConfig.Value<T> loadedOrDefault(Supplier<T> configValue, T fallback) {
+        return () -> {
+            try {
+                return configValue.get();
+            } catch (IllegalStateException ignored) {
+                return fallback;
+            }
+        };
     }
 }

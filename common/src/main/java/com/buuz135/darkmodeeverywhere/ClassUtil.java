@@ -1,7 +1,7 @@
 package com.buuz135.darkmodeeverywhere;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.GameRenderer;
 
 
@@ -38,7 +38,7 @@ public class ClassUtil {
                                 || frame.getClassName().equals(RenderSystem.class.getName())
                                 || frame.getClassName().startsWith("java.lang.Thread")
                                 || frame.getMethodName().equals(SET_SHADER_METHOD_NAME)
-                                || frame.getClassName().equals(GuiGraphics.class.getName())
+                                || frame.getClassName().equals(GuiGraphicsExtractor.class.getName())
                 ))
                 .findFirst()
                 .map(f -> f.getClassName() + ":" + f.getMethodName())

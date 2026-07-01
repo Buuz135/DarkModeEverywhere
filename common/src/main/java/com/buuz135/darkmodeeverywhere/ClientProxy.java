@@ -1,92 +1,40 @@
 package com.buuz135.darkmodeeverywhere;
 
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.VertexFormat;
-import io.netty.util.concurrent.DefaultEventExecutor;
-import io.netty.util.concurrent.EventExecutor;
-import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.FutureListener;
-import io.netty.util.concurrent.Promise;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
+import org.lwjgl.glfw.GLFW;
 
 public class ClientProxy {
-    private final EventExecutor eventExecutor;
     public static Object2BooleanMap<String> BLACKLISTED_ELEMENTS = new Object2BooleanOpenHashMap<>();
     public static List<String> MODDED_BLACKLIST = new ArrayList<>();
     public static ShaderConfig CONFIG = new ShaderConfig();
-    public static Map<ShaderConfig.ShaderValue, ShaderInstance> TEX_SHADERS = new HashMap<>();
-    public static Map<ShaderConfig.ShaderValue, ShaderInstance> TEX_COLOR_SHADERS = new HashMap<>();
-    private static HashMap<ResourceLocation, Promise<ShaderInstance>> ON_SHADERS_LOADED = new HashMap<>();
     public static List<ShaderConfig.ShaderValue> SHADER_VALUES = new ArrayList<>();
     public static ShaderConfig.ShaderValue SELECTED_SHADER_VALUE = null;
 
     public ClientProxy() {
-        eventExecutor = new DefaultEventExecutor();
         DarkModeEverywhere.init();
     }
 
-    private void registerShaderForLoading(ShaderLoader shaderLoader, ResourceLocation shaderResourceLocation, VertexFormat format) {
-        try {
-            DarkModeEverywhere.LOGGER.debug("Registering shader {} for loading", shaderResourceLocation);
-            ON_SHADERS_LOADED.put(shaderResourceLocation, eventExecutor.newPromise());
-            shaderLoader.register(shaderResourceLocation, format, shaderInstance -> {
-                DarkModeEverywhere.LOGGER.debug("Shader {} has loaded, resolving promise", shaderResourceLocation);
-                ON_SHADERS_LOADED.get(shaderResourceLocation).setSuccess(shaderInstance);
-            });
-        } catch (IOException e) {
-            DarkModeEverywhere.LOGGER.trace("Failed to register shader", e);
-        }
-    }
-
-    public void listenForShaderLoaded(ShaderLoader shaderLoader, ResourceLocation shaderResourceLocation, VertexFormat format, Consumer<ShaderInstance> onLoaded) {
-        if (!(ON_SHADERS_LOADED.containsKey(shaderResourceLocation))) {
-            registerShaderForLoading(shaderLoader, shaderResourceLocation, format);
-        }
-
-        Promise<ShaderInstance> onLoadedPromise = ON_SHADERS_LOADED.get(shaderResourceLocation);
-        FutureListener<ShaderInstance> listener = (Future<ShaderInstance> shaderInstance) -> onLoaded.accept(shaderInstance.get());
-        onLoadedPromise.addListener(listener);
-    }
-
-    public void registerAllShaders(ShaderLoader shaderLoader){
-        TEX_SHADERS = new HashMap<>();
-        TEX_COLOR_SHADERS = new HashMap<>();
-        ON_SHADERS_LOADED = new HashMap<>();
+    public void registerAllShaders(){
         SHADER_VALUES = new ArrayList<>();
         for (ShaderConfig.ShaderValue shaderValue : CONFIG.getShaders()) {
             SHADER_VALUES.add(shaderValue);
-            if (shaderValue == null) continue;
-            listenForShaderLoaded(shaderLoader, shaderValue.texShaderLocation, DefaultVertexFormat.POSITION_TEX, shaderInstance -> TEX_SHADERS.put(shaderValue, shaderInstance));
-            listenForShaderLoaded(shaderLoader, shaderValue.texColorShaderLocation, DefaultVertexFormat.POSITION_TEX_COLOR, shaderInstance -> TEX_COLOR_SHADERS.put(shaderValue, shaderInstance));
         }
         SELECTED_SHADER_VALUE = SHADER_VALUES.get(CONFIG.getSelectedShaderIndex());
         RenderedClassesTracker.start();
-    }
-
-    public static ShaderInstance getSelectedTexShader() {
-        return TEX_SHADERS.get(SELECTED_SHADER_VALUE);
-    }
-
-    public static ShaderInstance getSelectedTexColorShader() {
-        return TEX_COLOR_SHADERS.get(SELECTED_SHADER_VALUE);
     }
 
     public static ShaderConfig.ShaderValue getSelectedShaderValue() {
@@ -114,7 +62,8 @@ public class ClientProxy {
     }
 
     private int getNextShaderValueIndex() {
-        if (Screen.hasShiftDown()) {
+        if (GLFW.glfwGetKey(Minecraft.getInstance().getWindow().handle(), GLFW.GLFW_KEY_LEFT_SHIFT) == GLFW.GLFW_PRESS
+                || GLFW.glfwGetKey(Minecraft.getInstance().getWindow().handle(), GLFW.GLFW_KEY_RIGHT_SHIFT) == GLFW.GLFW_PRESS) {
             return 0;
         }
 
@@ -127,7 +76,7 @@ public class ClientProxy {
     }
 
     private Tooltip getShaderSwitchButtonTooltip() {
-        MutableComponent tooltipComponent = (SELECTED_SHADER_VALUE == null ? Component.translatable("gui." + DarkModeEverywhere.MODID + ".light_mode") : SELECTED_SHADER_VALUE.displayName).plainCopy();
+        MutableComponent tooltipComponent = (SELECTED_SHADER_VALUE == null ? Component.translatable("gui." + DarkModeEverywhere.MODID + ".light_mode") : SELECTED_SHADER_VALUE.getDisplayName()).plainCopy();
         tooltipComponent.append(Component.literal("\n"));
         tooltipComponent.append(Component.translatable("gui.tooltip." + DarkModeEverywhere.MODID + ".shader_switch_tooltip").withStyle(ChatFormatting.GRAY));
 
@@ -158,10 +107,5 @@ public class ClientProxy {
            buttonBuilder.tooltip(getShaderSwitchButtonTooltip());
            addButton.accept(buttonBuilder.build());
        }
-    }
-
-    @FunctionalInterface
-    public interface ShaderLoader {
-        void register(ResourceLocation shaderResourceLocation, VertexFormat format, Consumer<ShaderInstance> onLoaded) throws IOException;
     }
 }

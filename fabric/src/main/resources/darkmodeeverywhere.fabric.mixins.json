@@ -2,9 +2,11 @@
   "required": true,
   "minVersion": "0.8",
   "package": "com.buuz135.darkmodeeverywhere.fabric.mixin",
-  "compatibilityLevel": "JAVA_21",
+  "compatibilityLevel": "JAVA_25",
   "client": [
-    "ScreenAccessor"
+    "MinecraftMixin",
+    "ScreenAccessor",
+    "ScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1

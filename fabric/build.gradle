@@ -3,22 +3,25 @@ plugins {
     id 'fabric-loom'
 }
 dependencies {
-    minecraft "com.mojang:minecraft:${minecraft_version}"
-    mappings loom.layered {
-        officialMojangMappings()
-        parchment("org.parchmentmc.data:parchment-${parchment_minecraft}:${parchment_version}@zip")
-    }
-    modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
+    minecraft("com.mojang:minecraft:${minecraft_version}")
+    mappings(loom.layered {
+        mappings(file('src/main/mappings/noop.tiny')) {
+            fallbackNamespaces('official', 'named')
+        }
+    })
+    modImplementation("net.fabricmc:fabric-loader:${fabric_loader_version}")
 }
 
 loom {
+    noIntermediateMappings()
+    mods {
+        "${mod_id}" {
+            sourceSet sourceSets.main
+        }
+    }
     def aw = project(':common').file("src/main/resources/${mod_id}.accesswidener")
     if (aw.exists()) {
         accessWidenerPath.set(aw)
-    }
-    mixin {
-        defaultRefmapName.set("${mod_id}.refmap.json")
     }
     runs {
         client {
@@ -34,4 +37,26 @@ loom {
             runDir('runs/server')
         }
     }
+}
+
+def loaderAttribute = Attribute.of('io.github.mcgradleconventions.loader', String)
+['apiElements', 'runtimeElements', 'sourcesElements', 'javadocElements', 'includeInternal', 'modCompileClasspath'].each { variant ->
+    configurations.matching { it.name == variant }.configureEach {
+        attributes {
+            attribute(loaderAttribute, 'fabric')
+        }
+    }
+}
+sourceSets.configureEach {
+    [it.compileClasspathConfigurationName, it.runtimeClasspathConfigurationName].each { variant ->
+        configurations.named(variant) {
+            attributes {
+                attribute(loaderAttribute, 'fabric')
+            }
+        }
+    }
+}
+
+tasks.matching { it.name == 'remapSourcesJar' }.configureEach {
+    enabled = false
 }

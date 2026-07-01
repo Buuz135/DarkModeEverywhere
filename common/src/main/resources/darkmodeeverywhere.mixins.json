@@ -2,14 +2,14 @@
   "required": true,
   "minVersion": "0.8",
   "package": "com.buuz135.darkmodeeverywhere.mixins",
-  "compatibilityLevel": "JAVA_21",
+  "compatibilityLevel": "JAVA_25",
   "refmap": "darkmodeeverywhere.refmap.json",
   "mixins": [
   ],
   "client": [
     "FontMixin",
-    "GameRenderMixin",
-    "VertexBufferMixin"
+    "GuiGraphicsExtractorMixin",
+    "ShaderManagerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
