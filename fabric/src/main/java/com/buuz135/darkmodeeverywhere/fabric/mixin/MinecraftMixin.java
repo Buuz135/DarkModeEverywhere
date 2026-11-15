@@ -2,7 +2,6 @@ package com.buuz135.darkmodeeverywhere.fabric.mixin;
 
 import com.buuz135.darkmodeeverywhere.fabric.FabricModResourcePackSource;
 import net.minecraft.client.Minecraft;
-import net.minecraft.server.packs.repository.PackRepository;
 import net.minecraft.server.packs.repository.RepositorySource;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
