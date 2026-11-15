@@ -1,6 +1,12 @@
 package com.buuz135.darkmodeeverywhere;
 
-import com.mojang.blaze3d.pipeline.RenderPipeline;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.renderpearl.api.pipeline.BlendFunction;
+import com.mojang.renderpearl.api.pipeline.ColorTargetState;
+import com.mojang.renderpearl.api.pipeline.PrimitiveTopology;
+import com.mojang.renderpearl.api.pipeline.RenderPipeline;
+
+import net.minecraft.client.renderer.BindGroupLayouts;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
 
@@ -68,20 +74,27 @@ public class DarkRenderPipelines {
     private static RenderPipeline create(RenderPipeline source, String name, String fragmentShader, float divideFactor, boolean premultipliedAlpha) {
         RenderPipeline.Builder builder = RenderPipeline.builder()
                 .withLocation(Identifier.fromNamespaceAndPath(DarkModeEverywhere.MODID, "pipeline/" + name))
-                .withVertexShader(source.getVertexShader())
+                .withVertexShader(source == RenderPipelines.GUI ? "core/gui" : "core/position_tex_color")
                 .withFragmentShader(Identifier.fromNamespaceAndPath(DarkModeEverywhere.MODID, fragmentShader))
                 .withShaderDefine("DME_DIVIDE_FACTOR", divideFactor)
-                .withColorTargetState(source.getColorTargetState())
+                .withColorTargetState(new ColorTargetState(premultipliedAlpha
+                    ? BlendFunction.TRANSLUCENT_PREMULTIPLIED_ALPHA
+                    : BlendFunction.TRANSLUCENT
+                ))
                 .withDepthStencilState(Optional.ofNullable(source.getDepthStencilState()))
                 .withPolygonMode(source.getPolygonMode())
                 .withCull(source.isCull())
-                .withVertexFormat(source.getVertexFormat(), source.getVertexFormatMode());
+                .withVertexBinding(0, source == RenderPipelines.GUI
+                    ? DefaultVertexFormat.POSITION_COLOR
+                    : DefaultVertexFormat.POSITION_TEX_COLOR)
+                .withPrimitiveTopology(PrimitiveTopology.QUADS);
 
-        for (String sampler : source.getSamplers()) {
-            builder.withSampler(sampler);
-        }
-        for (RenderPipeline.UniformDescription uniform : source.getUniforms()) {
-            builder.withUniform(uniform.name(), uniform.type());
+        builder.withBindGroupLayout(BindGroupLayouts.GLOBALS)
+            .withBindGroupLayout(BindGroupLayouts.PROJECTION)
+            .withBindGroupLayout(BindGroupLayouts.DYNAMIC_TRANSFORMS);
+
+        if (source != RenderPipelines.GUI) {
+            builder.withBindGroupLayout(BindGroupLayouts.SAMPLER0);
         }
         if (premultipliedAlpha) {
             builder.withShaderDefine("DME_PREMULTIPLIED_ALPHA");

@@ -15,7 +15,6 @@ import net.minecraft.network.chat.MutableComponent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
-import org.lwjgl.glfw.GLFW;
 
 public class ClientProxy {
     public static Object2BooleanMap<String> BLACKLISTED_ELEMENTS = new Object2BooleanOpenHashMap<>();
@@ -62,8 +61,7 @@ public class ClientProxy {
     }
 
     private int getNextShaderValueIndex() {
-        if (GLFW.glfwGetKey(Minecraft.getInstance().getWindow().handle(), GLFW.GLFW_KEY_LEFT_SHIFT) == GLFW.GLFW_PRESS
-                || GLFW.glfwGetKey(Minecraft.getInstance().getWindow().handle(), GLFW.GLFW_KEY_RIGHT_SHIFT) == GLFW.GLFW_PRESS) {
+        if (Minecraft.getInstance().hasShiftDown()) {
             return 0;
         }
 

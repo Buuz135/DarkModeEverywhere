@@ -26,7 +26,7 @@ public class FontMixin {
     private void darkModeEverywhere$adjustColorA(TextColor textColor, CallbackInfoReturnable<Integer> cir) {
         int color = textColor == null ? this.color : ARGB.color(ARGB.alpha(this.color), textColor.getValue());
         if (ClientProxy.SELECTED_SHADER_VALUE == null) return;
-        if (Minecraft.getInstance().screen == null) return;
+        if (Minecraft.getInstance().gui.screen() == null) return;
         if (color == 0) return;
         var callerClassName = ClassUtil.getCallerClassName();
         if (callerClassName != null && ClientProxy.isElementNameBlacklisted(callerClassName)) return;
@@ -35,7 +35,7 @@ public class FontMixin {
         ShaderConfig.ShaderValue shaderValue = ClientProxy.SELECTED_SHADER_VALUE;
         if (shaderValue.darkColorReplacement == -1) return;
         int rgb = color & 0xFFFFFF;
-        if (ChatFormatting.GRAY.getColor().equals(rgb) || ChatFormatting.DARK_GRAY.getColor().equals(rgb)) {
+        if (TextColor.fromLegacyFormat(ChatFormatting.GRAY).getValue() == rgb || TextColor.fromLegacyFormat(ChatFormatting.DARK_GRAY).getValue() == rgb) {
             cir.setReturnValue(withAlpha(color, shaderValue.darkColorReplacement));
             return;
         }

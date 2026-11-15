@@ -5,9 +5,9 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.packs.PackLocationInfo;
+import net.minecraft.server.packs.PackMetadataResources;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackSelectionConfig;
-import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.PathPackResources;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackCompatibility;
@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 public class FabricModResourcePackSource implements RepositorySource {
 
@@ -74,13 +75,13 @@ public class FabricModResourcePackSource implements RepositorySource {
         );
         Pack.ResourcesSupplier resourcesSupplier = new Pack.ResourcesSupplier() {
             @Override
-            public PackResources openPrimary(PackLocationInfo locationInfo) {
+            public PackMetadataResources openMetadata(PackLocationInfo locationInfo) {
                 return new PathPackResources(locationInfo, resourceRoot);
             }
 
             @Override
-            public PackResources openFull(PackLocationInfo locationInfo, Pack.Metadata metadata) {
-                return new PathPackResources(locationInfo, resourceRoot);
+            public Stream<PackResources> openResources(PackLocationInfo locationInfo, Pack.Metadata metadata) {
+                return Stream.of(new PathPackResources(locationInfo, resourceRoot));
             }
         };
         Pack.Metadata metadata = new Pack.Metadata(

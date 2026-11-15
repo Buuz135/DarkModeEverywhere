@@ -4,7 +4,7 @@ import com.buuz135.darkmodeeverywhere.ClassUtil;
 import com.buuz135.darkmodeeverywhere.ClientProxy;
 import com.buuz135.darkmodeeverywhere.DarkRenderPipelines;
 import com.buuz135.darkmodeeverywhere.ShaderConfig;
-import com.mojang.blaze3d.pipeline.RenderPipeline;
+import com.mojang.renderpearl.api.pipeline.RenderPipeline;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

@@ -37,7 +37,7 @@ public class DarkConfig {
         }
     }
 
-    private static void saveStandalone() {
+    public static void saveStandalone() {
         CONFIG_FILE.getParentFile().mkdirs();
         StoredConfig storedConfig = StoredConfig.from(CLIENT);
         try (FileWriter writer = new FileWriter(CONFIG_FILE)) {
